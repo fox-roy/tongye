@@ -2538,6 +2538,23 @@ function aiErr(e) {
 const DENS = { low: { l: '少', n: '1 到 2' }, mid: { l: '适中', n: '2 到 5' }, high: { l: '多', n: '5 到 8' } };
 const personaLine = () => (S.stats.persona ? '你的设定（你就是这个人，不是在演）：\n' + S.stats.persona + '\n你的口吻、性格、在意的事、经历和喜好，都要实实在在带进你写的每一句话里。下面的格式和篇幅要求照旧。' : '');
 const personaNote = () => (S.stats.persona ? '- 批注要从你自己的设定出发：这段字让“你”想到什么，哪里戳到你，你的经历、喜好、脾气会让你怎么说。不要写成中立的文学点评，换个人来写也行的话就是写偏了。' : '');
+const HUMAN_RULES = '说人话：像一个真人在书边写字，别人没进过你的脑子，所以每条批注都要让人一眼看懂你在说这段里的哪个具体的点（人、动作、某个词、某个细节），并且把想法说完整，不要只丢一句谜语般的感叹。不要写“值得玩味”“引人深思”“不禁”“仿佛”“耐人寻味”“细思极恐”这类套话，不要排比，不要故作深沉的比喻，不要用破折号做转折，不要每条都用同一个句式开头，也不要每条都以反问收尾。有话就直说，没话就别批。';
+const SENT_END = '。！？!?；;…\n', CLAUSE = '，、,：:';
+function snapQuote(text, loc) {
+  let { s, e } = loc;
+  const isB = c => SENT_END.includes(c) || CLAUSE.includes(c);
+  const open = '“‘「『（(《';
+  const startOk = s === 0 || isB(text[s - 1]) || /\s/.test(text[s - 1]);
+  const endOk = e >= text.length || SENT_END.includes(text[e - 1]) || CLAUSE.includes(text[e - 1]);
+  let a = s, b = e;
+  if (!startOk) { while (a > 0 && !isB(text[a - 1])) a--; while (a < s && /\s/.test(text[a])) a++; }
+  if (!endOk) {
+    while (b < text.length && !isB(text[b])) b++;
+    if (b < text.length && SENT_END.includes(text[b])) { b++; while (b < text.length && '”’」』）)》'.includes(text[b])) b++; }
+  }
+  if (a === b || b - a > 90 || (b - a) > (e - s) * 6 + 30) return loc;
+  return { s: a, e: b };
+}
 const clipPara = (t, n) => (t.length > n ? t.slice(0, n) + '…' : t);
 function buildAnnotatePrompt(chap, from, upTo, start, ctx, mine, readTo) {
   const lines = [];
@@ -2555,11 +2572,12 @@ function buildAnnotatePrompt(chap, from, upTo, start, ctx, mine, readTo) {
     '任务：在新段落里挑 ' + DENS[S.stats.density].n + ' 处，写你自己的批注。',
     readTo != null && upTo > readTo ? '读者目前读到第 ' + readTo + ' 段。编号大于 ' + readTo + ' 的段落是让你提前批注的，读者翻到才会看到你的批注。' : '',
     '- 只依据上面给出的文字。不要透露、不要猜测之后的情节，读者还没读到。' + (readTo != null && upTo > readTo ? '批注提前写在后面的段落上，也不要写“果然”“后来”“前面埋的伏笔”这类依赖全局的话。' : ''),
-    '- 语气像朋友在书边随手写字：短，直接，有自己的看法。可以不同意作者，也可以不同意读者；可以吐槽，可以提一个真正想问的问题。不要客套，不要说“写得真好”这类空话，不要概括段意。',
+    '- 语气像朋友在书边随手写字：口语，直接，有自己的看法。可以不同意作者，也可以不同意读者；可以吐槽，可以提一个真正想问的问题。不要客套，不要说“写得真好”这类空话，不要概括段意。',
+    '- ' + HUMAN_RULES,
     personaNote(),
     '- 读者如果写过想法，可以顺着接话。',
-    '- 每条批注 50 字以内。',
-    '- quote 必须是该段里一字不差的连续原文，4 到 30 个字。p 必须是上面出现过的新段落编号。',
+    '- 每条批注 50 到 130 字，说完整一个想法，可以有两三句：先点出你抓住的那个具体细节，再说你的看法或疑问。',
+    '- quote 必须是该段里一字不差的连续原文，而且是完整的一句或一个完整的分句（从句首或标点之后开始，到标点处结束），10 到 60 个字，不要在词语或句子中间截断。p 必须是上面出现过的新段落编号。',
     '同时更新 memo：把旧摘要和这次读到的内容合在一起，300 字以内，只写到' + (readTo != null && upTo > readTo ? '读者读到的第 ' + readTo + ' 段为止' : '目前为止') + '发生了什么。',
     '只输出 JSON，不要别的文字：{"notes":[{"p":段落编号,"quote":"原文","note":"批注"}],"memo":"摘要"}'
   ].filter(Boolean).join('\n\n');
@@ -2592,10 +2610,11 @@ async function annotateChapter(silent) {
     for (const it of list.slice(0, 10)) {
       const p = Number(it.p);
       if (!Number.isInteger(p) || p < start || p > upTo || typeof it.note !== 'string' || !it.note.trim()) continue;
-      const loc = locateQuote(chap.p[p], it.quote);
+      let loc = locateQuote(chap.p[p], it.quote);
       if (!loc) continue;
+      loc = snapQuote(chap.p[p], loc);
       const now = Date.now();
-      const note = { ch: c, p, s: loc.s, e: loc.e, q: chap.p[p].slice(loc.s, loc.e), by: 'ai', msgs: [{ by: 'ai', t: it.note.trim().slice(0, 200), at: now }], at: now, upd: now };
+      const note = { ch: c, p, s: loc.s, e: loc.e, q: chap.p[p].slice(loc.s, loc.e), by: 'ai', msgs: [{ by: 'ai', t: it.note.trim().slice(0, 320), at: now }], at: now, upd: now };
       const ref = notesCol(S.book.id).doc();
       await dbCall(() => ref.set(note));
       made.push(Object.assign({ id: ref.id }, note));
@@ -2629,7 +2648,7 @@ function buildReplyPrompt(n) {
     '被划线的段落：' + clipPara(para, 900),
     '划线的原文：「' + n.q + '」（划线的是' + (n.by === 'ai' ? '你' : '读者') + '）',
     n.msgs.length ? '这条批注下的对话：\n' + thread : '读者划了这句话，还没写想法，想听听你怎么看。',
-    '请以克总的身份接着说。口语，60 字以内，有自己的观点，不客套，不复述对方的话。可以不同意，也可以反问。不要透露读者还没读到的情节。只输出回复本身。'
+    '请以克总的身份接着说。口语，120 字以内，把想法说完整，有自己的观点，不客套，不复述对方的话。可以不同意，也可以反问。' + HUMAN_RULES + '不要透露读者还没读到的情节。只输出回复本身。'
   ].filter(Boolean).join('\n\n');
 }
 async function askReply(noteId) {
