@@ -136,6 +136,20 @@ h1, h2, h3, p { margin: 0; }
 .rprog i { display: block; height: 100%; width: 0; background: var(--fg); }
 .ch-title { font: 400 calc(var(--fs) * 1.45)/1.35 var(--f-display); margin: 28px 0 20px; text-wrap: balance; overflow-wrap: anywhere; }
 #reader article.wrap { max-width: 680px; padding-left: max(var(--gut), env(safe-area-inset-left, 0px)); padding-right: max(var(--gut), env(safe-area-inset-right, 0px)); }
+#paras p.fh { font-weight: 600; text-indent: 0; margin: 1.2em 0 .6em; line-height: 1.5; text-align: left; break-after: avoid; }
+#paras p.h1 { font-size: 1.5em; } #paras p.h2 { font-size: 1.3em; } #paras p.h3 { font-size: 1.15em; }
+#paras p.fac { text-align: center; text-indent: 0; } #paras p.far { text-align: right; text-indent: 0; }
+#paras p.fsc { font-variant: small-caps; } #paras p.fb { font-weight: 600; } #paras p.fi { font-style: italic; }
+#paras p.fq { margin-left: 1.4em; margin-right: .6em; padding-left: .9em; border-left: 2px solid var(--line); text-indent: 0; font-size: .96em; }
+#paras p.fv1 { text-indent: 0; text-align: left; margin-bottom: .1em; padding-left: 1em; }
+#paras p.fv2 { text-indent: 0; text-align: left; padding-left: 1em; }
+#paras b { font-weight: 700; } #paras em { font-style: italic; } #paras u { text-underline-offset: .15em; }
+#paras sup, #paras sub { font-size: .7em; line-height: 0; }
+#paras .sc { font-variant: small-caps; } #paras .uc { text-transform: uppercase; }
+#paras a.fnref { color: var(--ai-ink); cursor: pointer; text-decoration: none; padding: 0 .15em; font-weight: 600; }
+.fnpop { position: fixed; z-index: 60; width: min(86vw, 340px); max-height: 42vh; overflow: auto; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.28); font: 400 14px/1.7 var(--f-ui); animation: fnin .18s ease-out both; }
+@keyframes fnin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fnpop .fnh { font-size: 11px; letter-spacing: .12em; color: var(--muted); margin-bottom: 4px; }
 #paras p { font: 400 var(--fs)/var(--lh) var(--f-read); text-indent: var(--indent); margin: 0 0 var(--pgap); overflow-wrap: anywhere; text-align: var(--align); }
 mark.hl { color: inherit; background: none; border-radius: 2px; cursor: pointer; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 mark.hl.me { background: var(--me-bg); }
@@ -155,6 +169,38 @@ i.tag.ai { background: var(--ai-bg); color: var(--ai-ink); }
 .selbar .btn { white-space: nowrap; padding: 8px 10px; min-height: 40px; flex: none; }
 @media (max-width: 460px) { .selbar .cnt { display: none; } .selbar .in { justify-content: space-between; } .selbar .btn { flex: 1; padding: 8px 4px; } }
 .selbar .cnt { color: var(--muted); font-size: 12px; margin-right: auto; white-space: nowrap; }
+
+
+/* polish: scrubber, page chrome, micro-interactions */
+#scrub .srange { position: relative; height: 26px; display: grid; align-items: center; }
+#scrub input { -webkit-appearance: none; appearance: none; background: transparent; height: 26px; position: relative; z-index: 1; cursor: pointer; }
+#scrub input::-webkit-slider-runnable-track { height: 3px; border-radius: 3px; background: linear-gradient(to right, var(--ai-line) var(--p, 0%), var(--line) var(--p, 0%)); }
+#scrub input::-moz-range-track { height: 3px; border-radius: 3px; background: var(--line); }
+#scrub input::-moz-range-progress { height: 3px; border-radius: 3px; background: var(--ai-line); }
+#scrub input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -6.5px; border-radius: 50%; background: var(--bg); border: 2px solid var(--ai-line); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ai-line) 16%, transparent); transition: transform .12s ease; }
+#scrub input:active::-webkit-slider-thumb { transform: scale(1.18); }
+#scrub input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--ai-line); }
+#scrub .ticks { position: absolute; left: 8px; right: 8px; top: 50%; height: 0; pointer-events: none; }
+#scrub .ticks i { position: absolute; top: -5px; width: 1px; height: 10px; background: var(--muted); opacity: .45; }
+.rprog i { position: relative; transition: width .3s ease; }
+.rprog i::after { content: ""; position: absolute; right: -2px; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: var(--ai-line); }
+body.pg #pgHead { background: linear-gradient(to right, transparent, color-mix(in srgb, var(--fg) 22%, transparent), transparent) center bottom / min(70%, 420px) 1px no-repeat; padding-bottom: 8px; letter-spacing: .08em; }
+body.pg #pgnum { letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+body.pg #pgnum::before, body.pg #pgnum::after { content: ""; display: inline-block; width: 26px; height: 1px; background: currentColor; opacity: .35; vertical-align: middle; margin: 0 12px; }
+html[data-deco="archive"] body.pg #pgnum::before, html[data-deco="archive"] body.pg #pgnum::after, html[data-deco="gothic"] body.pg #pgnum::before, html[data-deco="gothic"] body.pg #pgnum::after { width: 14px; height: 5px; background: none; border-block: 1px solid currentColor; opacity: .5; }
+.pglayer::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 22px; background: linear-gradient(to right, transparent, rgba(0, 0, 0, .09)); pointer-events: none; }
+.pglayer::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 18px; background: linear-gradient(to left, transparent, rgba(0, 0, 0, .06)); pointer-events: none; }
+.pgdim { position: absolute; inset: 0; z-index: 0; background: #000; opacity: 0; pointer-events: none; }
+.btn { transition: transform .12s ease, border-color .15s ease, background-color .15s ease; }
+.btn:active { transform: scale(.97); }
+.sheet .back { animation: kfade .22s ease both; }
+@keyframes kfade { from { opacity: 0; } to { opacity: 1; } }
+.selbar { animation: krise .2s cubic-bezier(.22, .8, .3, 1) both; }
+@keyframes krise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+.toast { animation: kpop .22s cubic-bezier(.22, .8, .3, 1) both; }
+@keyframes kpop { from { transform: translate(-50%, 8px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+mark.hl { transition: background-color .25s ease, box-shadow .25s ease; }
+@media (prefers-reduced-motion: reduce) { .sheet .back, .selbar, .toast { animation: none; } .btn, .rprog i, mark.hl { transition: none; } }
 
 /* sheets */
 .sheet { position: fixed; inset: 0; z-index: 60; }
@@ -187,6 +233,8 @@ i.tag.ai { background: var(--ai-bg); color: var(--ai-ink); }
 .inp:focus-visible { outline: 2px solid var(--ai-line); outline-offset: 1px; }
 textarea { width: 100%; min-height: 84px; resize: vertical; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); line-height: 1.6; }
 textarea:focus-visible { outline: 2px solid var(--ai-line); outline-offset: 1px; }
+#sheet input[type=text] { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); min-height: 42px; }
+#sheet input[type=text]:focus-visible { outline: 2px solid var(--ai-line); outline-offset: 1px; }
 .pgview, .flow { display: contents; }
 #pgHead, #pgnum { display: none; }
 body.pg { overflow: hidden; overscroll-behavior: none; }
@@ -258,6 +306,23 @@ html[data-deco="gothic"] .cab { background: repeating-linear-gradient(90deg, rgb
 html[data-deco="gothic"] .cab::before { left: 6px; right: 6px; top: 6px; height: 3px; border-radius: 0; background: #E8E6E0; box-shadow: none; }
 html[data-deco="gothic"] .rowshelf::after { background: repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 3px, transparent 3px 11px), linear-gradient(#C9C5BC, #8C8981 60%, #6B6962); border-radius: 0; }
 html[data-deco="gothic"] .spine { border-radius: 0; filter: grayscale(1) contrast(1.08); }
+html[data-deco="archive"] { --vine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='22' viewBox='0 0 200 22'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M2 11 C 16 2, 28 20, 44 11 S 66 4, 76 9 C 82 12, 80 17, 75 15'/%3E%3Cpath d='M198 11 C 184 2, 172 20, 156 11 S 134 4, 124 9 C 118 12, 120 17, 125 15'/%3E%3Cpath d='M100 2 L108 11 L100 20 L92 11 Z' fill='%23000'/%3E%3Cpath d='M86 11 H90 M110 11 H114'/%3E%3C/g%3E%3Ccircle cx='60' cy='15' r='1.4'/%3E%3Ccircle cx='140' cy='15' r='1.4'/%3E%3C/svg%3E"); }
+html[data-deco="archive"] .lib-head .mark { letter-spacing: .14em; }
+html[data-deco="archive"] .tlc, html[data-deco="archive"] #libBody .pick, html[data-deco="archive"] .stat3 .tile {
+  border-radius: 0; border: 1px solid color-mix(in srgb, var(--fg) 55%, transparent); outline: 1px solid color-mix(in srgb, var(--fg) 30%, transparent); outline-offset: -5px; box-shadow: none;
+  background: var(--orn-tl) left 2px top 2px / 26px 26px no-repeat, var(--orn-tr) right 2px top 2px / 26px 26px no-repeat, var(--orn-bl) left 2px bottom 2px / 26px 26px no-repeat, var(--orn-br) right 2px bottom 2px / 26px 26px no-repeat, var(--surface);
+}
+html[data-deco="archive"] #libBody .pick { background: var(--surface); }
+html[data-deco="archive"] .tlc.first { background: var(--orn-tl) left 2px top 2px / 26px 26px no-repeat, var(--orn-tr) right 2px top 2px / 26px 26px no-repeat, var(--orn-bl) left 2px bottom 2px / 26px 26px no-repeat, var(--orn-br) right 2px bottom 2px / 26px 26px no-repeat, var(--surface); }
+html[data-deco="archive"] .tlc { padding: 22px 22px 16px; }
+html[data-deco="archive"] .today { border-block: 3px double color-mix(in srgb, var(--fg) 60%, transparent); }
+html[data-deco="archive"] .sheet .panel { border-radius: 0; border-top: 3px double color-mix(in srgb, var(--fg) 60%, transparent); }
+html[data-deco="archive"] .sheet .panel::before { content: ""; display: block; height: 16px; margin: -4px auto 6px; width: 120px; background: var(--fg); opacity: .7; -webkit-mask: var(--orn-mid) no-repeat center / contain; mask: var(--orn-mid) no-repeat center / contain; }
+html[data-deco="archive"] .btn { border-radius: 2px; }
+html[data-deco="archive"] .tk-cv, html[data-deco="archive"] .cover { border-radius: 0; }
+html[data-deco="archive"] .tl-d span { border-radius: 0; }
+html[data-deco="archive"] .spine { border-radius: 0; filter: saturate(.5) contrast(1.06); }
+html[data-deco="archive"] .gsearch { border-radius: 2px; border-color: color-mix(in srgb, var(--fg) 55%, transparent); }
 html[data-deco="vintage"] .tlc, html[data-deco="vintage"] #libBody .pick, html[data-deco="vintage"] .stat3 .tile { border: 1px solid color-mix(in srgb, var(--fg) 38%, transparent); outline: 1px solid color-mix(in srgb, var(--fg) 20%, transparent); outline-offset: -5px; border-radius: 6px; box-shadow: none; }
 html[data-deco="vintage"] .today { border-block: 3px double color-mix(in srgb, var(--fg) 45%, transparent); }
 html[data-deco="vintage"] .lib-sub::after, html[data-deco="vintage"] #libBody::after { opacity: .45; }
@@ -458,7 +523,7 @@ html[data-deco="gothic"] .gsearch { border-radius: 2px; border-color: var(--fg);
   <div class="print-line" aria-hidden="true"><span>TONGYE · READING TOGETHER</span><i class="bc"></i><span id="libNo">[00]</span></div>
   <div class="lib-head">
     <h1 class="mark" aria-label="同页"><span class="m-ai">同</span><span class="m-me">页</span></h1>
-    <div class="hbtns"><button class="btn ghost small" id="msBtn" type="button">里程碑</button><button class="btn ghost small" id="statsBtn" type="button">统计</button><button class="btn ghost small" id="settingsBtn" type="button">设置</button></div>
+    <div class="hbtns"><button class="btn ghost small" id="msBtn" type="button">里程碑</button><button class="btn ghost small" id="keepBtn" type="button">夹子</button><button class="btn ghost small" id="statsBtn" type="button">统计</button><button class="btn ghost small" id="settingsBtn" type="button">设置</button></div>
   </div>
   <p class="lib-sub">你和克总读同一本书。你读到哪，克总就只看到哪。</p>
   <div id="libBanner" hidden></div>
@@ -494,7 +559,7 @@ html[data-deco="gothic"] .gsearch { border-radius: 2px; border-color: var(--fg);
   </article>
 </main>
 
-<div id="scrub" hidden><div class="in"><span id="scrubLab"></span><input type="range" id="scrubR" min="0" max="1000" step="1" aria-label="阅读进度，拖动跳转"></div></div>
+<div id="scrub" hidden><div class="in"><span id="scrubLab"></span><div class="srange"><input type="range" id="scrubR" min="0" max="1000" step="1" aria-label="阅读进度，拖动跳转"><div class="ticks" id="scrubTicks" aria-hidden="true"></div></div></div></div>
 
 <div class="selbar" id="selbar" hidden>
   <div class="in">
@@ -503,6 +568,7 @@ html[data-deco="gothic"] .gsearch { border-radius: 2px; border-color: var(--fg);
     <button class="btn" id="selNote" type="button">写想法</button>
     <button class="btn" id="selCard" type="button">做卡片</button>
     <button class="btn ai" id="selAsk" type="button">问克总</button>
+    <button class="btn" id="selKeep" type="button">收藏</button>
     <button class="btn ai" id="selTr" type="button">翻译</button>
   </div>
 </div>
@@ -598,15 +664,22 @@ function sizeSplit(paras, target) {
 }
 function splitLong(chs, max) {
   const out = [];
+  const mk = (t, ps, fm, c, first) => {
+    const o = { t, ps };
+    if (fm && fm.some(Boolean)) o.fm = fm;
+    if (c.fn) o.fn = c.fn;
+    if (c.tf && first) o.tf = c.tf;
+    return o;
+  };
   for (const c of chs) {
     const total = c.ps.reduce((a, p) => a + p.length, 0);
     if (total <= max) { out.push(c); continue; }
-    let part = [], n = 0, k = 1;
-    for (const p of c.ps) {
-      if (part.length && n + p.length > max) { out.push({ t: c.t + '（' + k + '）', ps: part }); k++; part = []; n = 0; }
-      part.push(p); n += p.length;
-    }
-    if (part.length) out.push({ t: k === 1 ? c.t : c.t + '（' + k + '）', ps: part });
+    let part = [], pf = [], n = 0, k = 1;
+    c.ps.forEach((p, i) => {
+      if (part.length && n + p.length > max) { out.push(mk(c.t + '（' + k + '）', part, pf, c, k === 1)); k++; part = []; pf = []; n = 0; }
+      part.push(p); pf.push(c.fm ? c.fm[i] : null); n += p.length;
+    });
+    if (part.length) out.push(mk(k === 1 ? c.t : c.t + '（' + k + '）', part, pf, c, k === 1));
   }
   return out;
 }
@@ -614,10 +687,14 @@ function packChapters(chs, limit) {
   const docs = [], starts = [];
   let cur = [], size = 0;
   chs.forEach((c, i) => {
-    const n = c.ps.reduce((a, p) => a + p.length, 0) + c.t.length;
+    const n = c.ps.reduce((a, p) => a + p.length, 0) + c.t.length + (c.fm ? JSON.stringify(c.fm).length : 0) + (c.fn ? JSON.stringify(c.fn).length : 0);
     if (cur.length && size + n > limit) { docs.push(cur); cur = []; size = 0; }
     if (!cur.length) starts.push(i);
-    cur.push({ t: c.t, p: c.ps });
+    const o = { t: c.t, p: c.ps };
+    if (c.fm) o.f = c.fm;
+    if (c.fn) o.fn = c.fn;
+    if (c.tf) o.tf = c.tf;
+    cur.push(o);
     size += n;
   });
   if (cur.length) docs.push(cur);
@@ -632,9 +709,9 @@ function locateQuote(text, quote) {
   if (q2.length >= 2 && (i = text.indexOf(q2)) >= 0) return { s: i, e: i + q2.length };
   return null;
 }
-function segmentPara(text, notes) {
+function segmentPara(text, notes, extra) {
   const pts = new Set([0, text.length]);
-  for (const n of notes) { pts.add(clamp(n.s, 0, text.length)); pts.add(clamp(n.e, 0, text.length)); }
+  for (const n of extra ? notes.concat(extra) : notes) { pts.add(clamp(n.s, 0, text.length)); pts.add(clamp(n.e, 0, text.length)); }
   const cuts = [...pts].sort((x, y) => x - y);
   const segs = [];
   for (let k = 0; k < cuts.length - 1; k++) {
@@ -693,26 +770,268 @@ async function decodeText(file) {
   }
   return text.replace(/^﻿/, '');
 }
-function extractEpubChapter(html, no) {
+/* ---------- epub typesetting (kept as sparse per-paragraph metadata; plain text stays the source of truth) ---------- */
+const FMT_PROPS = ['text-transform', 'font-variant', 'font-variant-caps', 'font-weight', 'font-style', 'text-decoration', 'text-decoration-line', 'vertical-align', 'text-align', 'text-indent', 'letter-spacing', 'font-size'];
+const FMT_INH = ['text-transform', 'font-variant', 'font-variant-caps', 'font-weight', 'font-style', 'text-align', 'letter-spacing'];
+const cssSpec = s => {
+  const ids = (s.match(/#[\w-]+/g) || []).length;
+  const cls = (s.match(/\.[\w-]+|\[[^\]]*\]|:(?!:)[\w-]+/g) || []).length;
+  const tags = (s.replace(/\[[^\]]*\]/g, '').match(/(^|[\s>+~])[a-zA-Z][\w-]*/g) || []).length;
+  return ids * 100 + cls * 10 + tags;
+};
+function parseSheet(css) {
+  const out = [];
+  try {
+    const d = document.implementation.createHTMLDocument('');
+    const st = d.createElement('style'); st.textContent = css; d.head.append(st);
+    const walk = rules => {
+      for (const r of Array.from(rules || [])) {
+        if (r.type === 1) {
+          const decl = {}; let any = false;
+          for (const p of FMT_PROPS) { const v = r.style.getPropertyValue(p); if (v) { decl[p] = v.trim().toLowerCase(); any = true; } }
+          if (!any) continue;
+          for (const sel of r.selectorText.split(',')) {
+            const s = sel.trim();
+            if (s && !/::?(before|after|first-letter|first-line|marker)/.test(s)) out.push({ sel: s, decl, sp: cssSpec(s), ord: out.length });
+          }
+        } else if (r.type === 4 && !/print|amzn|kindle/i.test(r.media.mediaText)) walk(r.cssRules);
+      }
+    };
+    walk(st.sheet && st.sheet.cssRules);
+  } catch (e) {}
+  return out;
+}
+function declOf(el, rules) {
+  const hits = [];
+  for (const r of rules) { try { if (el.matches(r.sel)) hits.push(r); } catch (e) {} }
+  hits.sort((a, b) => a.sp - b.sp || a.ord - b.ord);
+  const d = {};
+  for (const r of hits) Object.assign(d, r.decl);
+  const st = el.getAttribute('style');
+  if (st) for (const part of st.split(';')) {
+    const i = part.indexOf(':'); if (i < 1) continue;
+    const k = part.slice(0, i).trim().toLowerCase();
+    if (FMT_PROPS.includes(k)) d[k] = part.slice(i + 1).trim().toLowerCase();
+  }
+  return d;
+}
+function styleOf(el, ctx) {
+  let r = ctx.cache.get(el);
+  if (r) return r;
+  const par = el.parentElement ? styleOf(el.parentElement, ctx) : {};
+  const own = ctx.rules.length ? declOf(el, ctx.rules) : {};
+  r = { own };
+  for (const k of FMT_INH) r[k] = own[k] !== undefined ? own[k] : par[k];
+  ctx.cache.set(el, r);
+  return r;
+}
+const isBold = v => /^(bold|bolder|[6-9]00)$/.test(v || '');
+const isItal = v => /italic|oblique/.test(v || '');
+const isSc = st => /small-caps/.test((st['font-variant'] || '') + ' ' + (st['font-variant-caps'] || ''));
+function relSize(v) {
+  if (!v) return 0;
+  const kw = { larger: 1.2, smaller: .85, 'x-large': 1.5, large: 1.2, 'xx-large': 1.8, small: .85, 'x-small': .75, medium: 1 };
+  let n = 0;
+  if (kw[v]) n = kw[v];
+  else if (/^[\d.]+em$/.test(v)) n = parseFloat(v);
+  else if (/^[\d.]+%$/.test(v)) n = parseFloat(v) / 100;
+  else if (/^[\d.]+(px|pt)$/.test(v)) n = parseFloat(v) / (/pt$/.test(v) ? 12 : 16);
+  return n && Math.abs(n - 1) > .06 ? clamp(Math.round(n * 100) / 100, .6, 2.6) : 0;
+}
+function blockFmt(el, ctx) {
+  const st = styleOf(el, ctx), f = {};
+  const tag = el.tagName.toLowerCase();
+  if (/^h[1-6]$/.test(tag)) f.h = Number(tag[1]);
+  const al = st['text-align'];
+  if (al === 'center') f.a = 'c'; else if (al === 'right' || al === 'end') f.a = 'r';
+  const tt = st['text-transform'];
+  if (tt === 'uppercase') f.tt = 'u'; else if (tt === 'capitalize') f.tt = 'c';
+  if (isSc(st)) f.sc = 1;
+  const ls = st['letter-spacing'];
+  if (ls && ls !== 'normal') {
+    const n = /em$/.test(ls) ? parseFloat(ls) : /px$/.test(ls) ? parseFloat(ls) / 16 : 0;
+    if (n >= .02) f.ls = clamp(Math.round(n * 100) / 100, .02, .6);
+  }
+  if (!f.h) { if (isBold(st['font-weight'])) f.b = 1; if (isItal(st['font-style'])) f.i = 1; }
+  const fs = relSize(st.own['font-size']);
+  if (fs) f.fs = fs;
+  const ti = st.own['text-indent'];
+  if (ti !== undefined && /^[-+]?0+(\.0+)?(em|px|pt|%)?$/.test(ti)) f.ti = 0;
+  for (let a = el; a && a.tagName; a = a.parentElement) {
+    const t = a.tagName.toLowerCase();
+    if (t === 'blockquote') { f.q = 1; break; }
+    const cl = (a.getAttribute('class') || '') + ' ' + (a.getAttribute('epub:type') || '');
+    if (/(^|[\s_-])(epigraph|extract|blockquote|quote)([\s_-]|$)/i.test(cl)) { f.q = 1; break; }
+    if (t === 'body') break;
+  }
+  return f;
+}
+function isVerseEl(el) {
+  for (let a = el; a && a.tagName; a = a.parentElement) {
+    const cl = (a.getAttribute('class') || '') + ' ' + (a.getAttribute('epub:type') || '');
+    if (/(^|[\s_:-])(poem|poetry|verse|stanza|lg|linegroup)([\s_-]|$)/i.test(cl)) return true;
+    if (a.tagName.toLowerCase() === 'body') break;
+  }
+  return false;
+}
+const hrefKey = (docPath, href) => {
+  if (!href || /^[a-z][\w+.-]*:/i.test(href)) return null;
+  const i = href.indexOf('#'); if (i < 0) return null;
+  const p = i === 0 ? docPath : resolvePath(docPath.slice(0, docPath.lastIndexOf('/') + 1), href.slice(0, i));
+  let id = href.slice(i + 1);
+  try { id = decodeURIComponent(id); } catch (e) {}
+  return p + '#' + id;
+};
+const etype = el => (el.getAttribute('epub:type') || '') + ' ' + (el.getAttribute('role') || '');
+const NOTE_TYPE = /(^|[\s-])(footnote|endnote|rearnote|noteref|note)(\s|$)/;
+function isNoteAnchor(a) {
+  if (/noteref/.test(etype(a))) return true;
+  const t = (a.textContent || '').trim();
+  if (!t || t.length > 8) return false;
+  return /^[\[(（【]?[\d*†‡a-z]{1,3}[\])）】]?$/i.test(t) || !!a.closest('sup') || !!a.querySelector('sup');
+}
+function noteTextOf(el) {
+  let t = el;
+  if (/^(a|span|sup)$/i.test(t.tagName)) t = t.closest('p,li,dd,aside,div,section') || t;
+  const c = t.cloneNode(true);
+  c.querySelectorAll('a[href*="#"]').forEach(a => { if (/^[\s↩↑⏎^\[\]()（）\d.*†‡返回回]+$/.test(a.textContent || '')) a.remove(); });
+  c.querySelectorAll('br').forEach(b => b.replaceWith(' '));
+  let s = (c.textContent || '').replace(/\s+/g, ' ').trim();
+  s = s.replace(/^[\[(（【]?\d{1,4}[\])）】.、]?\s*/, '');
+  s = s.replace(/[\s↩↑⏎]+$/, '');
+  return s.length > 1500 ? s.slice(0, 1500) + '…' : s;
+}
+/* pass over a parsed doc: note candidates (refs) and note bodies */
+function scanNotes(doc, docPath, refs, bodies) {
+  doc.querySelectorAll('a[href]').forEach(a => { if (isNoteAnchor(a)) { const k = hrefKey(docPath, a.getAttribute('href')); if (k) refs.add(k); } });
+  doc.querySelectorAll('[id]').forEach(el => {
+    const k = docPath + '#' + el.getAttribute('id');
+    if (bodies.has(k)) return;
+    if (NOTE_TYPE.test(etype(el)) || refs.has(k)) {
+      const t = noteTextOf(el); if (t) bodies.set(k, t);
+    }
+  });
+}
+function normLine(arr) {
+  const a = []; let sp = false;
+  for (const x of arr) {
+    if (/\s/.test(x[0])) { if (!sp) a.push([' ', x[1], x[2]]); sp = true; } else { a.push(x); sp = false; }
+  }
+  const cjk = c => /[　-鿿＀-￯]/.test(c);
+  const b = [];
+  for (let i = 0; i < a.length; i++) {
+    if (a[i][0] === ' ' && i > 0 && i < a.length - 1 && cjk(a[i - 1][0]) && cjk(a[i + 1][0])) continue;
+    b.push(a[i]);
+  }
+  const c = b.filter(x => !/[​-‍﻿]/.test(x[0]));
+  let s = 0, e = c.length;
+  while (s < e && /[\s　]/.test(c[s][0])) s++;
+  while (e > s && /[\s　]/.test(c[e - 1][0])) e--;
+  return c.slice(s, e);
+}
+function lineOut(arr) {
+  let text = '', ranges = [], cur = null;
+  arr.forEach((x, i) => {
+    text += x[0];
+    const key = x[1] + '|' + (x[2] || '');
+    if (x[1]) {
+      if (cur && cur.key === key && cur.e === i) cur.e = i + 1;
+      else { cur = { key, s: i, e: i + 1, fl: x[1], fn: x[2] }; ranges.push(cur); }
+    }
+  });
+  return { t: text, r: ranges.map(r => r.fn ? [r.s, r.e, r.fl, r.fn] : [r.s, r.e, r.fl]) };
+}
+const INLINE_TAG = { b: 'b', strong: 'b', i: 'i', em: 'i', cite: 'i', dfn: 'i', var: 'i', u: 'u', ins: 'u', s: 'x', del: 'x', strike: 'x', sup: 'p', sub: 'd' };
+function extractEpubChapter(html, no, env) {
+  env = env || {};
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  doc.querySelectorAll('script,style,svg,img,rt,rp').forEach(n => n.remove());
-  doc.querySelectorAll('br').forEach(b => b.replaceWith('\u0001'));
+  doc.querySelectorAll('script,style,svg,img,rt,rp,nav').forEach(n => n.remove());
+  doc.querySelectorAll('[epub\\:type],[role]').forEach(n => {
+    const t = etype(n);
+    if (/pagebreak/.test(t) || (/^aside$/i.test(n.tagName) && /(^|\s)(doc-)?(footnote|endnote|rearnote)(\s|$)/.test(t))) n.remove();
+  });
   const body = doc.body;
   if (!body) return null;
+  const docPath = env.path || '';
+  const ctx = { rules: env.rules || [], cache: new WeakMap() };
+  const fn = {}, fnIds = {};
+  let fnN = 0;
+  const noteOf = a => {
+    if (!env.bodies || !isNoteAnchor(a)) return null;
+    const k = hrefKey(docPath, a.getAttribute('href'));
+    const t = k && env.bodies.get(k);
+    if (!t) return null;
+    if (!fnIds[k]) { fnIds[k] = 'n' + (++fnN); fn[fnIds[k]] = t; }
+    return fnIds[k];
+  };
   const sel = 'p,h1,h2,h3,h4,h5,h6,li,pre,dd,dt';
-  const els = Array.from(body.querySelectorAll(sel)).filter(el => !el.querySelector(sel));
-  const norm = s => clean(s.replace(/\s+/g, ' ').replace(/([　-鿿＀-￯]) (?=[　-鿿＀-￯])/g, '$1'));
-  const split = s => s.split('\u0001').map(norm).filter(Boolean);
-  let texts = els.length ? els.flatMap(el => split(el.textContent)) : split(body.textContent);
   const hEl = body.querySelector('h1,h2,h3');
+  const els0 = Array.from(body.querySelectorAll(sel)).filter(el => !el.querySelector(sel));
+  const els = els0.length ? els0 : [body];
+  const lines = [];
+  for (const el of els) {
+    const bst = styleOf(el, ctx);
+    const bf = blockFmt(el, ctx);
+    const bBold = isBold(bst['font-weight']) || bf.h, bItal = isItal(bst['font-style']);
+    const bTT = bst['text-transform'] === 'uppercase', bSC = isSc(bst);
+    const chars = [];
+    const rec = (node, fl, id, inSup) => {
+      if (node.nodeType === 3) { const t = node.nodeValue; for (let i = 0; i < t.length; i++) chars.push([t[i], fl, id]); return; }
+      if (node.nodeType !== 1) return;
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') { chars.push(['\u0001', '', null]); return; }
+      if (/^(script|style|svg|img|rt|rp|nav)$/.test(tag)) return;
+      let f = fl, nid = id, sup = inSup;
+      const add = c => { if (!f.includes(c)) f += c; };
+      if (INLINE_TAG[tag]) { add(INLINE_TAG[tag]); if (tag === 'sup') sup = true; }
+      if (ctx.rules.length || node.hasAttribute('style')) {
+        if (node !== el && (node.hasAttribute('class') || node.hasAttribute('style') || !INLINE_TAG[tag])) {
+          const st = styleOf(node, ctx), o = st.own;
+          if (isBold(st['font-weight']) && !bBold) add('b');
+          if (isItal(st['font-style']) && !bItal) add('i');
+          const td = (o['text-decoration'] || '') + ' ' + (o['text-decoration-line'] || '');
+          if (/underline/.test(td)) add('u'); if (/line-through/.test(td)) add('x');
+          const va = o['vertical-align'];
+          if (va === 'super' || va === 'sup') { add('p'); sup = true; } else if (va === 'sub') add('d');
+          if (st['text-transform'] === 'uppercase' && !bTT) add('U');
+          if (isSc(st) && !bSC) add('c');
+        }
+      }
+      if (tag === 'a') { const n = noteOf(node); if (n) { nid = n; add('n'); if (!sup) add('p'); sup = true; } }
+      for (const k of node.childNodes) rec(k, f, nid, sup);
+    };
+    for (const k of el.childNodes) rec(k, '', null, false);
+    const parts = [[]];
+    for (const x of chars) { if (x[0] === '\u0001') parts.push([]); else parts[parts.length - 1].push(x); }
+    const outs = parts.map(p => lineOut(normLine(p))).filter(o => o.t);
+    const inVerse = !bf.h && isVerseEl(el);
+    const verse = !bf.h && (inVerse || (outs.length > 1 && outs.every(o => o.t.length <= 42)));
+    const lastSib = !el.nextElementSibling || el.nextElementSibling.tagName !== el.tagName;
+    outs.forEach((o, i) => {
+      const f = Object.assign({}, bf);
+      if (verse) f.v = (i === outs.length - 1 && (outs.length > 1 || lastSib)) ? 2 : 1;
+      if (o.r.length) f.r = o.r;
+      lines.push({ t: o.t, f: Object.keys(f).length ? f : null, h: el === hEl });
+    });
+  }
+  const norm = s => clean(s.replace(/\s+/g, ' '));
   let title = hEl ? clean(hEl.textContent.replace(/[\u0001\s]+/g, ' ')) : '';
-  if (title && texts[0] && texts[0].replace(/\s+/g, '') === title.replace(/\s+/g, '')) texts.shift();
+  let tf = null;
+  if (hEl) { const f = blockFmt(hEl, ctx); delete f.h; delete f.q; delete f.ti; if (Object.keys(f).length) tf = f; }
+  if (title && lines[0] && lines[0].t.replace(/\s+/g, '') === title.replace(/\s+/g, '')) lines.shift();
   if (!title) title = clean(doc.title || '');
   if (!title) title = '第 ' + no + ' 节';
   if (/^(目\s*录|目\s*次|contents?|table of contents|toc)$/i.test(title)) return null;
-  const total = texts.reduce((a, p) => a + p.length, 0);
+  const total = lines.reduce((a, l) => a + l.t.length, 0);
   if (total < 60) return null;
-  return { t: clip(title, 40), ps: texts };
+  /* indent: only keep "no indent" when it marks exceptions, not the whole book's style */
+  const z = lines.filter(l => l.f && l.f.ti === 0).length;
+  if (z > lines.length * .6) lines.forEach(l => { if (l.f) { delete l.f.ti; if (!Object.keys(l.f).length) l.f = null; } });
+  const out = { t: clip(title, 40), ps: lines.map(l => l.t) };
+  if (lines.some(l => l.f)) out.fm = lines.map(l => l.f);
+  if (Object.keys(fn).length) out.fn = fn;
+  if (tf) out.tf = tf;
+  return out;
 }
 function shrinkCover(url) {
   return new Promise(res => {
@@ -759,11 +1078,42 @@ async function parseEpub(file, onProgress) {
   const tEl = opf.getElementsByTagNameNS('*', 'title')[0];
   const aEl = opf.getElementsByTagNameNS('*', 'creator')[0];
   const chs = [];
+  const dirOf = p => (p.includes('/') ? p.slice(0, p.lastIndexOf('/') + 1) : '');
+  const cssCache = new Map(), refs = new Set(), bodies = new Map();
+  const docRules = [], docPaths = [];
+  const isDoc = it => /html|xml/.test(it.type);
   for (let i = 0; i < spine.length; i++) {
     const it = spine[i];
-    if (/html|xml/.test(it.type)) {
-      const str = await rd(resolvePath(base, it.href));
-      if (str) { const c = extractEpubChapter(str, i + 1); if (c) chs.push(c); }
+    docPaths[i] = resolvePath(base, it.href);
+    docRules[i] = [];
+    if (!isDoc(it)) continue;
+    try {
+      const str = await rd(docPaths[i]);
+      if (!str) continue;
+      const doc = new DOMParser().parseFromString(str, 'text/html');
+      let rules = [];
+      for (const l of Array.from(doc.querySelectorAll('link[href]'))) {
+        if (!/stylesheet/i.test(l.getAttribute('rel') || '') && !/css/.test(l.getAttribute('type') || '')) continue;
+        const cp = resolvePath(dirOf(docPaths[i]), l.getAttribute('href'));
+        if (!cssCache.has(cp)) cssCache.set(cp, parseSheet((await rd(cp)) || ''));
+        rules = rules.concat(cssCache.get(cp));
+      }
+      const inl = Array.from(doc.querySelectorAll('style')).map(x => x.textContent).join('\n');
+      if (inl.trim()) rules = rules.concat(parseSheet(inl));
+      docRules[i] = rules.slice(0, 800).map((r, k) => Object.assign({}, r, { ord: k }));
+      scanNotes(doc, docPaths[i], refs, bodies);
+    } catch (e) {}
+  }
+  const miss = new Set([...refs].filter(k => !bodies.has(k)).map(k => k.slice(0, k.lastIndexOf('#'))));
+  for (let i = 0; i < spine.length && miss.size; i++) {
+    if (!isDoc(spine[i]) || !miss.has(docPaths[i])) continue;
+    try { const str = await rd(docPaths[i]); if (str) scanNotes(new DOMParser().parseFromString(str, 'text/html'), docPaths[i], refs, bodies); } catch (e) {}
+  }
+  for (let i = 0; i < spine.length; i++) {
+    const it = spine[i];
+    if (isDoc(it)) {
+      const str = await rd(docPaths[i]);
+      if (str) { const c = extractEpubChapter(str, i + 1, { path: docPaths[i], rules: docRules[i], bodies }); if (c) chs.push(c); }
     }
     if (onProgress) onProgress(i + 1, spine.length);
   }
@@ -1159,6 +1509,7 @@ const store = {
 };
 const S = {
   view: 'lib', books: [], progress: {}, stats: { days: {}, hours: {}, books: {}, fin: {}, stars: {}, start: {}, bd: {}, reviews: {}, goal: 0, density: 'mid', persona: '' }, statsReady: false,
+  keep: { cur: [], mat: [] }, keepReady: false,
   book: null, toc: [], ch: 0, chap: null, notes: [], notesUnsub: null,
   prog: { ch: 0, p: 0, mc: 0, mp: 0, pct: 0, ai: null }, memo: '',
   ai: { busy: false, ctl: null, pending: null }, sel: null, sheet: null, nav: 0,
@@ -1174,6 +1525,7 @@ const chunkDoc = (id, d) => bookDoc(id).collection('chunks').doc(String(d));
 const notesCol = id => bookDoc(id).collection('notes');
 const metaDoc = (id, n) => bookDoc(id).collection('meta').doc(n);
 const statsDoc = () => root.collection('stats').doc('reading');
+const keepDoc = () => root.collection('stats').doc('keep');
 
 async function dbCall(fn, tries = 4) {
   let last;
@@ -1437,7 +1789,7 @@ function renderSpineShelf(el) {
 let libRzT = 0;
 addEventListener('resize', () => { clearTimeout(libRzT); libRzT = setTimeout(() => { if (S.view === 'lib' && libView() === 'spine') renderLibrary(); }, 250); });
 const libView = () => store.get('tongye.libview') === 'grid' ? 'grid' : 'spine';
-const shelfMode = () => { const v = store.get('tongye.shelf'); if (v === 'paper' || v === 'wood') return v; const t = curSkin(); return t && t.deco === 'gothic' ? 'paper' : 'wood'; };
+const shelfMode = () => { const v = store.get('tongye.shelf'); if (v === 'paper' || v === 'wood') return v; const t = curSkin(); return t && (t.deco === 'gothic' || t.deco === 'archive') ? 'paper' : 'wood'; };
 function applyShelf() { document.body.classList.toggle('pshelf', shelfMode() === 'paper'); }
 function renderLibrary() {
   const el = $('#libBody');
@@ -1493,7 +1845,13 @@ async function importFile(file) {
       const text = await decodeText(file);
       parsed = { title: base, author: '', chs: splitTxtChapters(text) };
     } else throw new Error('type');
-    let chs = parsed.chs.map(c => ({ t: clip(clean(c.t) || '未命名', 40), ps: c.ps.filter(Boolean) })).filter(c => c.ps.length);
+    let chs = parsed.chs.map(c => {
+      const o = { t: clip(clean(c.t) || '未命名', 40), ps: c.ps.filter(Boolean) };
+      if (c.fm) { o.fm = c.fm.filter((_, i) => c.ps[i]); if (!o.fm.some(Boolean)) delete o.fm; }
+      if (c.fn) o.fn = c.fn;
+      if (c.tf) o.tf = c.tf;
+      return o;
+    }).filter(c => c.ps.length);
     chs = splitLong(chs, 20000);
     if (!chs.length) throw new Error('empty');
     const { docs, starts } = packChapters(chs, 36000);
@@ -1608,7 +1966,9 @@ async function showChapter(c, p, opt) {
   $('#rCh').textContent = '第 ' + (c + 1) + ' / ' + S.book.nCh + ' 章 · ' + clip(chap.t, 14);
   const el = parasEl();
   const frag = document.createDocumentFragment();
-  chap.p.forEach((_, i) => frag.append(h('p', { dataset: { i: String(i) } })));
+  hideFn();
+  applyTitleFmt($('#chTitle'), chap.tf);
+  chap.p.forEach((_, i) => { const pe = h('p', { dataset: { i: String(i) } }); if (chap.f) applyFmt(pe, chap.f[i]); frag.append(pe); });
   el.replaceChildren(frag);
   paintAll();
   renderEnd();
@@ -1704,6 +2064,65 @@ function leaveReader() {
   loadProgressFor(S.books);
 }
 
+/* ---------- source typesetting ---------- */
+const FMT_TAG = { p: 'sup', d: 'sub', b: 'b', i: 'em', u: 'u', x: 's' };
+function fmtWrap(node, fl, fid) {
+  for (const c of 'npdbiuxcU') {
+    if (!fl.includes(c)) continue;
+    const el = c === 'n' ? h('a', { class: 'fnref', role: 'button', dataset: { fn: fid || '' } }) : c === 'c' ? h('span', { class: 'sc' }) : c === 'U' ? h('span', { class: 'uc' }) : document.createElement(FMT_TAG[c]);
+    el.append(node); node = el;
+  }
+  return node;
+}
+function applyFmt(p, f) {
+  if (!f) return;
+  const c = [];
+  if (f.h) c.push('fh', 'h' + f.h);
+  if (f.q) c.push('fq');
+  if (f.v) c.push('fv' + f.v);
+  if (f.b) c.push('fb');
+  if (f.i) c.push('fi');
+  if (f.sc) c.push('fsc');
+  if (f.a) c.push(f.a === 'c' ? 'fac' : 'far');
+  p.className = c.join(' ');
+  const st = p.style;
+  if (f.tt) st.textTransform = f.tt === 'u' ? 'uppercase' : 'capitalize';
+  if (f.ls) st.letterSpacing = f.ls + 'em';
+  if (f.fs) st.fontSize = f.fs + 'em';
+  if (f.ti === 0) st.textIndent = '0';
+}
+function applyTitleFmt(el, f) {
+  const st = el.style;
+  st.textTransform = f && f.tt ? (f.tt === 'u' ? 'uppercase' : 'capitalize') : '';
+  st.letterSpacing = f && f.ls ? f.ls + 'em' : '';
+  st.fontVariant = f && f.sc ? 'small-caps' : '';
+  st.textAlign = f && f.a ? (f.a === 'c' ? 'center' : 'right') : '';
+}
+let fnPop = null;
+function hideFn() { if (fnPop) { fnPop.remove(); fnPop = null; } }
+function showFn(a, text) {
+  hideFn();
+  const pop = h('div', { class: 'fnpop', role: 'dialog' }, h('div', { class: 'fnh', text: '注释' }), h('div', { class: 'fnb', text }));
+  document.body.append(pop); fnPop = pop;
+  const r = a.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+  const pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let x = clamp(r.left + r.width / 2 - pw / 2, 10, W - pw - 10);
+  let y = r.bottom + 8;
+  if (y + ph > H - 10) y = Math.max(10, r.top - ph - 8);
+  pop.style.left = x + 'px'; pop.style.top = y + 'px';
+}
+document.addEventListener('pointerdown', e => { if (fnPop && !e.target.closest('.fnpop, a.fnref')) hideFn(); });
+window.addEventListener('scroll', hideFn, { passive: true });
+parasEl().addEventListener('click', e => {
+  const a = e.target.closest('a.fnref');
+  if (!a) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const t = S.chap && S.chap.fn && S.chap.fn[a.dataset.fn];
+  if (!t) return;
+  if (fnPop && fnPop._a === a) return hideFn();
+  showFn(a, t); fnPop._a = a;
+});
+
 /* ---------- highlights ---------- */
 const authors = n => new Set(n.msgs.map(m => m.by));
 function paintPara(el, i, notes) {
@@ -1711,14 +2130,21 @@ function paintPara(el, i, notes) {
   const sig = notes.map(n => [n.id, n.s, n.e, n.by, [...authors(n)].sort().join('')].join(':')).join('|');
   if (el._sig === sig && el.firstChild) return;
   el._sig = sig;
-  if (!notes.length) { el.textContent = text; return; }
+  const fr = S.chap.f && S.chap.f[i] && S.chap.f[i].r;
+  if (!notes.length && !fr) { el.textContent = text; return; }
   const frag = document.createDocumentFragment();
-  for (const sg of segmentPara(text, notes)) {
-    const piece = text.slice(sg.a, sg.b);
-    if (!sg.cover.length) frag.append(piece);
+  const extra = fr ? fr.map(r => ({ s: r[0], e: r[1] })) : null;
+  for (const sg of segmentPara(text, notes, extra)) {
+    let node = document.createTextNode(text.slice(sg.a, sg.b));
+    if (fr) {
+      let fl = '', fid = null;
+      for (const r of fr) if (r[0] <= sg.a && r[1] >= sg.b) { for (const c of r[2]) if (!fl.includes(c)) fl += c; if (r[3]) fid = r[3]; }
+      if (fl) node = fmtWrap(node, fl, fid);
+    }
+    if (!sg.cover.length) frag.append(node);
     else {
       const me = sg.cover.some(n => n.by === 'me'), ai = sg.cover.some(n => n.by === 'ai');
-      frag.append(h('mark', { class: 'hl' + (me ? ' me' : '') + (ai ? ' ai' : ''), dataset: { n: sg.cover.map(n => n.id).join(',') } }, piece));
+      frag.append(h('mark', { class: 'hl' + (me ? ' me' : '') + (ai ? ' ai' : ''), dataset: { n: sg.cover.map(n => n.id).join(',') } }, node));
     }
     const ending = notes.filter(n => n.e === sg.b && n.msgs.length);
     for (const who of ['me', 'ai']) {
@@ -1824,7 +2250,7 @@ function buildSheet() {
   const k = S.sheet.kind;
   const body = $('#sheetBody');
   const keep = body.scrollTop;
-  const b = ({ toc: buildToc, notes: buildNotes, thread: buildThread, compose: buildCompose, settings: buildSettings, stats: buildStats, type: buildType, skinEdit: buildSkinEdit, card: buildCard, bookmenu: buildBookMenu, import: buildImport, busy: buildBusy, recap: buildRecap, translate: buildTranslate, miles: buildMiles, groups: buildGroups, book: buildBook, bookmenu: buildBookMgr, finish: buildFinish, gfind: buildGFind })[k]();
+  const b = ({ toc: buildToc, notes: buildNotes, thread: buildThread, compose: buildCompose, settings: buildSettings, stats: buildStats, keep: buildKeep, keepbox: buildKeepBox, type: buildType, skinEdit: buildSkinEdit, card: buildCard, bookmenu: buildBookMenu, import: buildImport, busy: buildBusy, recap: buildRecap, translate: buildTranslate, miles: buildMiles, groups: buildGroups, book: buildBook, bookmenu: buildBookMgr, finish: buildFinish, gfind: buildGFind })[k]();
   $('#sheet').classList.toggle('full', k === 'book' || k === 'bookmenu' || k === 'miles');
   $('#sheetTitle').textContent = b.title;
   body.replaceChildren(b.el);
@@ -1949,6 +2375,104 @@ async function jumpTo(n) {
   else scrollToPara(n.p, true);
   setTimeout(() => { const p = parasEl().children[n.p]; if (p) { p.classList.remove('flash'); void p.offsetWidth; p.classList.add('flash'); } }, 250);
 }
+/* ---------- keep box: 好奇清单 + 素材夹 ---------- */
+let keepChain = Promise.resolve();
+function saveKeep() {
+  const snap = JSON.parse(JSON.stringify(S.keep));
+  keepChain = keepChain.then(() => dbCall(() => keepDoc().set(snap))).catch(() => { toast('夹子没存上，再试一次。'); });
+}
+const keepId = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+const KEEP_TAGS = ['通感', '颜色', '气味', '触感', '动作', '对白', '开头', '比喻', '情绪', '环境'];
+function keepSrc() {
+  const b = S.book, c = S.chap;
+  return b ? { bk: b.id, bt: b.title, ch: S.ch, ct: c ? c.t : '' } : {};
+}
+const srcLine = it => (it.bt ? '《' + clip(it.bt, 16) + '》' : '') + (it.ct ? ' · ' + clip(it.ct, 14) : '');
+function buildKeep() {
+  const sel = S.sheet.sel, st = S.sheet;
+  const quote = sel.q || '';
+  const wrap = h('div', { style: 'display:grid;gap:12px' });
+  wrap.append(h('div', { class: 'fine', style: 'border-left:2px solid var(--line);padding-left:10px;max-height:6.5em;overflow:auto', text: clip(quote, 200) }));
+  wrap.append(h('div', { class: 'seg' }, ...[['mat', '存进素材夹'], ['cur', '记到好奇清单']].map(([m, t]) => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(st.mode === m), text: t, onclick: () => { st.text = ta.value; st.mode = m; buildSheet(); } }))));
+  const ta = h('textarea', { rows: '3', maxlength: '400', placeholder: st.mode === 'mat' ? '想说点什么？（可以不写）' : '想查什么？写成一句问题' });
+  ta.value = st.text !== undefined ? st.text : (st.mode === 'cur' ? clip(quote, 60) : '');
+  wrap.append(ta);
+  let tagIn = null;
+  if (st.mode === 'mat') {
+    tagIn = h('input', { type: 'text', placeholder: '标签，空格隔开', maxlength: '60', style: 'width:100%' });
+    tagIn.value = st.tags || '';
+    const used = {};
+    for (const m of S.keep.mat) for (const t of m.tags || []) used[t] = (used[t] || 0) + 1;
+    const sug = [...new Set(Object.keys(used).sort((a, b) => used[b] - used[a]).slice(0, 6).concat(KEEP_TAGS))].slice(0, 12);
+    wrap.append(tagIn, h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px' }, ...sug.map(t => h('button', { class: 'btn small', type: 'button', text: t, onclick: () => {
+      const cur = tagIn.value.split(/[\s,，、#]+/).filter(Boolean);
+      tagIn.value = (cur.includes(t) ? cur.filter(x => x !== t) : cur.concat(t)).join(' ');
+    } }))));
+  }
+  wrap.append(h('button', { class: 'btn primary', type: 'button', text: '放进去', onclick: () => {
+    const src = Object.assign(keepSrc(), { p: sel.p, at: Date.now(), id: keepId() });
+    if (st.mode === 'mat') {
+      S.keep.mat.unshift(Object.assign(src, { q: quote.slice(0, 600), n: ta.value.trim(), tags: (tagIn.value.split(/[\s,，、#]+/).filter(Boolean)).slice(0, 8) }));
+      toast('放进素材夹了');
+    } else {
+      S.keep.cur.unshift(Object.assign(src, { t: ta.value.trim() || clip(quote, 60), q: quote.slice(0, 200), done: false }));
+      toast('记下了，读完再去查');
+    }
+    saveKeep(); clearSelection(); closeSheet();
+  } }));
+  wrap.append(h('button', { class: 'btn ghost small', type: 'button', text: '看夹子', onclick: () => openSheet('keepbox', { tab: st.mode }) }));
+  return { title: '收藏这段', el: wrap };
+}
+function keepMd(tab) {
+  if (tab === 'cur') return '# 好奇清单\n\n' + S.keep.cur.map(c => '- [' + (c.done ? 'x' : ' ') + '] ' + c.t + (c.q && c.q !== c.t ? '（' + c.q + '）' : '') + (srcLine(c) ? ' —— ' + srcLine(c) : '')).join('\n') + '\n';
+  return '# 素材夹\n\n' + S.keep.mat.map(m => '> ' + m.q.replace(/\n+/g, ' ') + '\n\n' + (m.n ? m.n + '\n\n' : '') + (m.tags && m.tags.length ? m.tags.map(t => '#' + t).join(' ') + '  ' : '') + (srcLine(m) ? '—— ' + srcLine(m) : '') + '\n').join('\n---\n\n');
+}
+function buildKeepBox() {
+  const st = S.sheet, tab = st.tab || 'cur';
+  const wrap = h('div', { style: 'display:grid;gap:12px' });
+  const pend = S.keep.cur.filter(c => !c.done).length;
+  wrap.append(h('div', { class: 'seg' }, ...[['cur', '好奇清单' + (pend ? ' ' + pend : '')], ['mat', '素材夹 ' + (S.keep.mat.length || '')]].map(([m, t]) => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(tab === m), text: t.trim(), onclick: () => { st.tab = m; buildSheet(); } }))));
+  const del = (arr, id) => { if (!confirm('删掉这一条？')) return; const i = arr.findIndex(x => x.id === id); if (i >= 0) arr.splice(i, 1); saveKeep(); buildSheet(); };
+  const jump = it => it.bk ? h('button', { class: 'btn ghost small', type: 'button', text: '回到原处', onclick: () => { const b = S.books.find(x => x.id === it.bk); if (!b) return toast('这本书不在书架上了。'); closeSheet(); if (S.view === 'reader' && S.book && S.book.id === b.id) showChapter(it.ch, it.p || 0); else { S.prog.__jump = null; openBook(b).then(() => showChapter(it.ch, it.p || 0)).catch(() => {}); } } }) : null;
+  if (tab === 'cur') {
+    const inp = h('input', { type: 'text', maxlength: '120', placeholder: '突然想知道什么？先记在这里', style: 'flex:1;min-width:0' });
+    const add = () => { const t = inp.value.trim(); if (!t) return; S.keep.cur.unshift(Object.assign(keepSrc(), { id: keepId(), t, q: '', at: Date.now(), done: false })); saveKeep(); buildSheet(); };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+    wrap.append(h('div', { style: 'display:flex;gap:8px' }, inp, h('button', { class: 'btn', type: 'button', text: '记下', onclick: add })));
+    if (pend) wrap.append(h('p', { class: 'fine', text: '先别查。读完这一章，再回来一条条看。' }));
+    const row = c => h('div', { style: 'display:grid;gap:4px;padding:10px 0;border-top:1px solid var(--line)' + (c.done ? ';opacity:.55' : '') },
+      h('div', { style: c.done ? 'text-decoration:line-through' : '', text: c.t }),
+      c.q && c.q !== c.t ? h('div', { class: 'fine', text: '“' + clip(c.q, 80) + '”' }) : null,
+      srcLine(c) ? h('div', { class: 'fine', text: srcLine(c) }) : null,
+      h('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' },
+        h('button', { class: 'btn ghost small', type: 'button', text: c.done ? '还没看' : '看过了', onclick: () => { c.done = !c.done; saveKeep(); buildSheet(); } }),
+        h('button', { class: 'btn ghost small', type: 'button', text: '问克总', onclick: () => { toast('把它抄给克总，或者直接选中书里的字问他。'); navigator.clipboard && navigator.clipboard.writeText(c.t).catch(() => {}); } }),
+        jump(c), h('button', { class: 'btn ghost small', type: 'button', text: '删除', onclick: () => del(S.keep.cur, c.id) })));
+    const open = S.keep.cur.filter(c => !c.done), done = S.keep.cur.filter(c => c.done);
+    if (!S.keep.cur.length) wrap.append(h('p', { class: 'fine', text: '还是空的。读书时选中一段，点"收藏"，就能记到这里。' }));
+    wrap.append(h('div', {}, ...open.map(row), ...done.map(row)));
+  } else {
+    const tags = {};
+    for (const m of S.keep.mat) for (const t of m.tags || []) tags[t] = (tags[t] || 0) + 1;
+    const names = Object.keys(tags).sort((a, b) => tags[b] - tags[a]);
+    if (names.length) wrap.append(h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px' }, ...[''].concat(names).map(t => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String((st.tag || '') === t), text: t ? t + ' ' + tags[t] : '全部', onclick: () => { st.tag = t; buildSheet(); } }))));
+    const list = S.keep.mat.filter(m => !st.tag || (m.tags || []).includes(st.tag));
+    if (!S.keep.mat.length) wrap.append(h('p', { class: 'fine', text: '还是空的。读到想偷师的句子，选中它，点"收藏"。' }));
+    wrap.append(h('div', {}, ...list.map(m => h('div', { style: 'display:grid;gap:6px;padding:12px 0;border-top:1px solid var(--line)' },
+      h('div', { style: 'border-left:2px solid var(--ai-line);padding-left:10px;line-height:1.7', text: m.q }),
+      m.n ? h('div', { text: m.n }) : null,
+      (m.tags || []).length ? h('div', { class: 'fine', text: m.tags.map(t => '#' + t).join('  ') }) : null,
+      srcLine(m) ? h('div', { class: 'fine', text: srcLine(m) }) : null,
+      h('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' },
+        h('button', { class: 'btn ghost small', type: 'button', text: '复制', onclick: () => { navigator.clipboard && navigator.clipboard.writeText(m.q).then(() => toast('复制了'), () => toast('复制没成功')); } }),
+        jump(m), h('button', { class: 'btn ghost small', type: 'button', text: '删除', onclick: () => del(S.keep.mat, m.id) }))))));
+  }
+  if (S.keep[tab].length) wrap.append(h('button', { class: 'btn ghost small', type: 'button', text: '导出成 Markdown', onclick: async () => {
+    try { await downloads.save({ filename: tab === 'cur' ? '好奇清单.md' : '素材夹.md', data: keepMd(tab) }); toast('存好了'); } catch (e) { toast('没导出来。'); }
+  } }));
+  return { title: '夹子', el: wrap };
+}
+
 function buildSettings() {
   const goals = [0, 10, 20, 30, 45, 60];
   const el = h('div', { style: 'display:grid;gap:16px' });
@@ -2388,7 +2912,7 @@ function fillSkin(t) {
     bgImage: typeof t.bgImage === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(t.bgImage) ? t.bgImage : null,
     imgs: (() => { const o = {}, src = t.imgs || {}; for (const k of ['home', 'sheet', 'banner', 'frame']) o[k] = typeof src[k] === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(src[k]) ? src[k] : null; return o; })(),
     slice: clamp(Math.round(Number(t.slice) || 30), 8, 90),
-    deco: ['gothic', 'vintage'].includes(t.deco) ? t.deco : 'none',
+    deco: ['gothic', 'vintage', 'archive'].includes(t.deco) ? t.deco : 'none',
     dim: clamp(Number(t.dim) || 0, 0, 0.6),
     texture: TEXTURES.some(x => x[0] === t.texture) ? t.texture : 'none',
     chapter: CH_STYLES.some(x => x[0] === t.chapter) ? t.chapter : 'plain'
@@ -2397,6 +2921,8 @@ function fillSkin(t) {
 const BUILTIN = [
   { id: 'b:goth', name: '黑白·祷告', mode: 'light', c: { bg: '#E9E7E1', fg: '#141414', ai: '#8E1F27', me: '#BDB6A4' }, texture: 'grain', chapter: 'ornament', deco: 'gothic' },
   { id: 'b:gothn', name: '黑白·夜', mode: 'dark', c: { bg: '#0D0D0E', fg: '#DAD7CE', ai: '#B8444C', me: '#8C8574' }, texture: 'grain', chapter: 'rule', deco: 'gothic' },
+  { id: 'b:arc', name: '档案馆·夜', mode: 'dark', c: { bg: '#14161A', fg: '#CDD1D5', ai: '#A22D37', me: '#7C8791' }, texture: 'grain', chapter: 'ornament', deco: 'archive' },
+  { id: 'b:arcl', name: '档案馆·昼', mode: 'light', c: { bg: '#E2E4E6', fg: '#1A1D21', ai: '#8B1E2B', me: '#9CA5AD' }, texture: 'grain', chapter: 'ornament', deco: 'archive' },
   { id: 'b:old', name: '旧书页·雅', mode: 'light', c: { bg: '#EFE4CC', fg: '#33291D', ai: '#8A4B2A', me: '#E0B04A' }, texture: 'grain', chapter: 'ornament', deco: 'vintage' },
   { id: 'b:paper', name: '米黄纸', mode: 'light', c: { bg: '#F3EAD3', fg: '#3A3126', ai: '#7A5C2E', me: '#E3B23C' }, texture: 'grain', chapter: 'rule' },
   { id: 'b:green', name: '护眼绿', mode: 'light', c: { bg: '#DCE8D4', fg: '#26382B', ai: '#3F7A55', me: '#D9C24A' }, chapter: 'center' },
@@ -2426,7 +2952,14 @@ function skinVars(t) {
     '--h4': c.ai
   };
 }
-const SKIN_PROPS = Object.keys(skinVars(fillSkin({}))).concat(['color-scheme', '--sk-frame', '--sk-sheet', '--sk-banner', '--sk-slice']);
+const ORN_PROPS = ['--orn-tl', '--orn-tr', '--orn-bl', '--orn-br', '--orn-mid'];
+const SKIN_PROPS = Object.keys(skinVars(fillSkin({}))).concat(['color-scheme', '--sk-frame', '--sk-sheet', '--sk-banner', '--sk-slice', '--vine'], ORN_PROPS);
+function ornVars(color) {
+  const c = encodeURIComponent(color), st = "fill='none' stroke='" + c + "' stroke-linecap='round'";
+  const corner = tf => "url(\"data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g transform='" + tf + "' fill='none' stroke='" + color + "' stroke-linecap='round'><path d='M3 31 V12 C3 6 6 3 12 3 H31' stroke-width='1.3'/><path d='M8 31 V15 C8 11 11 8 15 8 H31' stroke-width='.8'/><path d='M12 12 C17 12 18 17 14 18 C11 19 10 15 13 15' stroke-width='1.1'/><path d='M3 3 L3 3' stroke-width='3'/><circle cx='20' cy='3' r='1.1' fill='" + color + "' stroke='none'/><circle cx='3' cy='20' r='1.1' fill='" + color + "' stroke='none'/></g></svg>") + "\")";
+  const mid = "url(\"data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='120' height='16' viewBox='0 0 120 16'><g fill='none' stroke='" + color + "' stroke-width='1' stroke-linecap='round'><path d='M2 8 C14 1 22 15 34 8 S50 4 54 8'/><path d='M118 8 C106 1 98 15 86 8 S70 4 66 8'/><path d='M60 2 L66 8 L60 14 L54 8 Z' fill='" + color + "'/></g><circle cx='46' cy='8' r='1.2' fill='" + color + "'/><circle cx='74' cy='8' r='1.2' fill='" + color + "'/></svg>") + "\")";
+  return { '--orn-tl': corner('translate(0 0)'), '--orn-tr': corner('translate(34 0) scale(-1 1)'), '--orn-bl': corner('translate(0 34) scale(1 -1)'), '--orn-br': corner('translate(34 34) scale(-1 -1)'), '--orn-mid': mid };
+}
 function setSkinOn(el, t) {
   for (const k of SKIN_PROPS) el.style.removeProperty(k);
   for (const a of ['data-deco', 'data-frame', 'data-sheet']) el.removeAttribute(a);
@@ -2437,6 +2970,7 @@ function setSkinOn(el, t) {
   if (t.imgs && t.imgs.banner) el.style.setProperty('--sk-banner', 'url("' + t.imgs.banner + '")');
   const v = skinVars(t);
   for (const k in v) el.style.setProperty(k, v[k]);
+  if (t.deco === 'archive') { const o = ornVars(t.c.fg); for (const k in o) el.style.setProperty(k, o[k]); }
   el.style.setProperty('color-scheme', t.mode);
   el.setAttribute('data-ch', t.chapter);
 }
@@ -2586,7 +3120,7 @@ function buildSkinEdit() {
   el.append(segRow('纸张纹理', TEXTURES, d.texture, v => { d.texture = v; }));
   el.append(segRow('章名样式', CH_STYLES, d.chapter, v => { d.chapter = v; }));
   d.imgs = d.imgs || { home: null, sheet: null, banner: null, frame: null };
-  el.append(segRow('装饰风格', [['none', '无'], ['gothic', '黑白哥特'], ['vintage', '旧书页']], d.deco || 'none', v => { d.deco = v; }));
+  el.append(segRow('装饰风格', [['none', '无'], ['gothic', '黑白哥特'], ['archive', '华饰档案'], ['vintage', '旧书页']], d.deco || 'none', v => { d.deco = v; }));
   const slot = (key, label, hint, maxSide) => {
     const id = 'skinSlot_' + key;
     const f = h('input', { type: 'file', accept: 'image/*', id, hidden: true });
@@ -3107,6 +3641,7 @@ function layoutPages() {
 }
 function pageOfPara(i) { const P = S.pg; return i > 0 && P.start.length ? P.start[clamp(i, 0, P.start.length - 1)] : 0; }
 function setPageNow(k) {
+  hideFn();
   const P = S.pg; P.page = clamp(k, 0, P.total - 1);
   $('#flow').style.transform = 'translate3d(' + (-P.page * P.vw) + 'px,0,0)';
 }
@@ -3150,17 +3685,25 @@ function slide(el, from, to, ms) {
   const a = el.animate([{ transform: 'translate3d(' + from + 'px,0,0)' }, { transform: 'translate3d(' + to + 'px,0,0)' }], { duration: ms, easing: 'cubic-bezier(.22,.8,.3,1)', fill: 'forwards' });
   return a.finished.then(() => { el.style.transform = 'translate3d(' + to + 'px,0,0)'; a.cancel(); }).catch(() => {});
 }
+function dimUnder(el, from, to, ms) {
+  if (pgReduced() || !el.animate) return () => {};
+  const d = h('div', { class: 'pgdim' }); el.parentNode.insertBefore(d, el);
+  const a = d.animate([{ opacity: from }, { opacity: to }], { duration: ms, easing: 'cubic-bezier(.22,.8,.3,1)', fill: 'forwards' });
+  return () => { try { a.cancel(); } catch (e) {} d.remove(); };
+}
 async function flipTo(np, dir) {
   const P = S.pg, vw = P.vw;
   if (dir > 0) {
     const L = makeLayer(P.page);
     setPageNow(np);
+    const un = dimUnder(L, 0.16, 0, 280);
     await slide(L, 0, -vw, 280);
-    L.remove();
+    un(); L.remove();
   } else {
     const L = makeLayer(np);
+    const un = dimUnder(L, 0, 0.16, 280);
     await slide(L, -vw, 0, 280);
-    setPageNow(np);
+    un(); setPageNow(np);
     L.remove();
   }
   reportPage();
@@ -3807,7 +4350,19 @@ function updateScrub() {
   if (box.hidden || scrubDrag.on) return;
   const v = Math.round(clamp((S.ch + scrubFrac()) / S.book.nCh, 0, 1) * 1000);
   $('#scrubR').value = String(v);
+  $('#scrubR').style.setProperty('--p', (v / 10) + '%');
+  buildTicks();
   $('#scrubLab').textContent = scrubLabel(v);
+}
+let ticksFor = '';
+function buildTicks() {
+  const box = $('#scrubTicks'), n = S.book ? S.book.nCh : 0, key = S.book ? S.book.id + ':' + n : '';
+  if (!box || key === ticksFor) return;
+  ticksFor = key; box.replaceChildren();
+  if (n < 2 || n > 80) return;
+  const f = document.createDocumentFragment();
+  for (let i = 1; i < n; i++) { const t = document.createElement('i'); t.style.left = (i / n * 100) + '%'; f.append(t); }
+  box.append(f);
 }
 function scrubLabel(v) {
   const n = S.book.nCh, x = v / 1000 * n, c = Math.min(n - 1, Math.floor(x)), f = Math.round((x - c) * 100);
@@ -3819,7 +4374,7 @@ async function scrubGo(v) {
   if (pgActive()) goPage(clamp(Math.round(f * S.pg.total) - 1, 0, S.pg.total - 1));
   else { const mx = document.documentElement.scrollHeight - window.innerHeight; window.scrollTo(0, mx * f); setTimeout(trackScroll, 40); }
 }
-$('#scrubR').addEventListener('input', e => { scrubDrag.on = true; $('#scrubLab').textContent = scrubLabel(Number(e.target.value)); });
+$('#scrubR').addEventListener('input', e => { scrubDrag.on = true; e.target.style.setProperty('--p', (Number(e.target.value) / 10) + '%'); $('#scrubLab').textContent = scrubLabel(Number(e.target.value)); });
 $('#scrubR').addEventListener('change', async e => {
   const v = Number(e.target.value);
   try { await scrubGo(v); } finally { scrubDrag.on = false; updateScrub(); }
@@ -3897,11 +4452,13 @@ $('#notesBtn').addEventListener('click', () => openSheet('notes'));
 $('#aiBtn').addEventListener('click', annotateChapter);
 $('#settingsBtn').addEventListener('click', () => openSheet('settings'));
 $('#statsBtn').addEventListener('click', () => { flushTime(); openSheet('stats'); });
+$('#keepBtn').addEventListener('click', () => openSheet('keepbox', { tab: 'cur' }));
+$('#selKeep').addEventListener('click', () => { if (S.sel) openSheet('keep', { sel: S.sel, mode: 'mat' }); });
 $('#msBtn').addEventListener('click', () => { flushTime(); openSheet('miles'); });
 $('#aaBtn').addEventListener('click', () => openSheet('type'));
 $('#file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importFile(f); });
 const keepSel = e => e.preventDefault();
-['selLine', 'selNote', 'selAsk', 'selCard', 'selTr'].forEach(id => $('#' + id).addEventListener('mousedown', keepSel));
+['selLine', 'selNote', 'selAsk', 'selCard', 'selTr', 'selKeep'].forEach(id => $('#' + id).addEventListener('mousedown', keepSel));
 $('#selLine').addEventListener('click', async () => {
   const sel = S.sel; if (!sel) return;
   try { await createNote(sel, ''); clearSelection(); } catch (e) { toast(e && e.code === 'quota_exceeded' ? '存储满了，删掉一本旧书再试。' : '没存上，再试一次。'); }
@@ -3935,6 +4492,11 @@ window.__tongye = { S, markFin, drawMiles, msItems, renderLibrary, setStars, set
     if (s.exists) { const d = JSON.parse(JSON.stringify(s.data())); S.stats = { days: d.days || {}, hours: d.hours || {}, books: d.books || {}, fin: d.fin || {}, stars: d.stars || {}, start: d.start || {}, bd: d.bd || {}, reviews: d.reviews || {}, goal: typeof d.goal === 'number' ? d.goal : 0, density: DENS[d.density] ? d.density : 'mid', persona: typeof d.persona === 'string' ? d.persona : '' }; }
     else await dbCall(() => statsDoc().set({ days: {}, hours: {}, goal: 0 }));
     S.statsReady = true;
+  } catch (e) {}
+  try {
+    const k = await dbCall(() => keepDoc().get());
+    if (k.exists) { const d = JSON.parse(JSON.stringify(k.data())); S.keep = { cur: d.cur || [], mat: d.mat || [] }; }
+    S.keepReady = true;
   } catch (e) {}
   booksCol().onSnapshot(snap => {
     S.books = snap.docs.map(d => Object.assign({ id: d.id }, JSON.parse(JSON.stringify(d.data())))).sort((a, b) => ((S.progress[b.id] && S.progress[b.id].at) || b.at) - ((S.progress[a.id] && S.progress[a.id].at) || a.at));
