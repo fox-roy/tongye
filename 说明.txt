@@ -1,0 +1,17 @@
+把这个文件夹里的所有文件（index.html、manifest.webmanifest、sw.js、三张 png）原样放到同一个网页空间里就行。
+
+最省事的办法：GitHub Pages
+1. 注册 github.com，新建一个仓库（设为 Public 或 Private 都行，Private 要付费计划才能开 Pages）。
+2. 点 Add file > Upload files，把这些文件全拖进去，提交。
+3. 仓库 Settings > Pages，Source 选 main 分支 / root，保存。
+4. 等一两分钟，会给你一个 https://你的用户名.github.io/仓库名/ 的网址。
+也可以用 Cloudflare Pages / Netlify，把文件夹拖进去就有网址。
+
+手机上：
+- iPhone：用 Safari 打开网址，点分享，选“添加到主屏幕”。
+- 安卓：用 Chrome 打开，菜单里选“安装应用”或“添加到主屏幕”。
+
+注意：
+- 书和批注存在手机浏览器里，每个网址各存各的；换网址等于换新书架，所以网址定下来就别改。
+- 平时多用设置里的“导出整个书架”备份一份。
+- 中转接口要允许浏览器跨域访问。

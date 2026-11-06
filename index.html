@@ -166,6 +166,7 @@ i.tag.ai { background: var(--ai-bg); color: var(--ai-ink); }
 .selbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .selbar .in { max-width: 680px; margin: 0 auto; display: flex; gap: 8px; align-items: center; }
 .selbar .in { gap: 6px; }
+.selbar { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
 .selbar .btn { white-space: nowrap; padding: 8px 10px; min-height: 40px; flex: none; }
 @media (max-width: 460px) { .selbar .cnt { display: none; } .selbar .in { justify-content: space-between; } .selbar .btn { flex: 1; padding: 8px 4px; } }
 .selbar .cnt { color: var(--muted); font-size: 12px; margin-right: auto; white-space: nowrap; }
@@ -2194,12 +2195,16 @@ parasEl().addEventListener('click', e => {
 /* ---------- selection ---------- */
 let selT = 0;
 document.addEventListener('selectionchange', () => { clearTimeout(selT); selT = setTimeout(onSel, 180); });
+const BUILD = '2026.11.06-a';
+let selLock = 0, selSnap = null;
 function hideSel() { S.sel = null; $('#selbar').hidden = true; }
+const curSel = () => { const v = S.sel || (Date.now() - selLock < 3000 ? selSnap : null); if (!v) toast('选区丢了，重新选一下。'); return v; };
 function closestPara(node) {
   const el = node && (node.nodeType === 1 ? node : node.parentElement);
   return el && el.closest ? el.closest('#paras p[data-i]') : null;
 }
 function onSel() {
+  if (S.sel && Date.now() - selLock < 2500) return;
   if (S.view !== 'reader' || S.sheet || !S.chap) return hideSel();
   const sel = window.getSelection();
   if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return hideSel();
@@ -2497,6 +2502,7 @@ function buildSettings() {
   el.append(apiBlock());
   el.append(backupBlock());
   el.append(h('p', { class: 'fine', text: '克总只会看到你读到的位置之前的文字。每次批注或回复都会按你的 key 计费。书和批注都存在这台手机上。' }));
+  el.append(h('p', { class: 'fine', style: 'text-align:center;margin-top:14px', text: '版本 ' + BUILD }));
   return { title: '设置', el };
 }
 function buildBookMenu() {
@@ -4472,20 +4478,21 @@ $('#aiBtn').addEventListener('click', annotateChapter);
 $('#settingsBtn').addEventListener('click', () => openSheet('settings'));
 $('#statsBtn').addEventListener('click', () => { flushTime(); openSheet('stats'); });
 $('#keepBtn').addEventListener('click', () => openSheet('keepbox', { tab: 'cur' }));
-$('#selKeep').addEventListener('click', () => { if (S.sel) openSheet('keep', { sel: S.sel, mode: 'mat' }); });
+$('#selKeep').addEventListener('click', () => { const v = curSel(); if (v) openSheet('keep', { sel: v, mode: 'mat' }); });
 $('#msBtn').addEventListener('click', () => { flushTime(); openSheet('miles'); });
 $('#aaBtn').addEventListener('click', () => openSheet('type'));
 $('#file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importFile(f); });
+['pointerdown', 'touchstart'].forEach(ev => $('#selbar').addEventListener(ev, () => { selLock = Date.now(); if (S.sel) selSnap = S.sel; }, { passive: true, capture: true }));
 const keepSel = e => e.preventDefault();
 ['selLine', 'selNote', 'selAsk', 'selCard', 'selTr', 'selKeep'].forEach(id => $('#' + id).addEventListener('mousedown', keepSel));
 $('#selLine').addEventListener('click', async () => {
-  const sel = S.sel; if (!sel) return;
+  const sel = curSel(); if (!sel) return;
   try { await createNote(sel, ''); clearSelection(); } catch (e) { toast(e && e.code === 'quota_exceeded' ? '存储满了，删掉一本旧书再试。' : '没存上，再试一次。'); }
 });
-$('#selCard').addEventListener('click', () => { if (S.sel) cardFromSel(S.sel); });
-$('#selTr').addEventListener('click', () => { if (S.sel) { openSheet('translate', { sel: S.sel, text: '', done: false }); runTranslate(); } });
-$('#selNote').addEventListener('click', () => { if (S.sel) openSheet('compose', { sel: S.sel, ask: false }); });
-$('#selAsk').addEventListener('click', () => { if (S.sel) openSheet('compose', { sel: S.sel, ask: true }); });
+$('#selCard').addEventListener('click', () => { const v = curSel(); if (v) cardFromSel(v); });
+$('#selTr').addEventListener('click', () => { const v = curSel(); if (v) { openSheet('translate', { sel: v, text: '', done: false }); runTranslate(); } });
+$('#selNote').addEventListener('click', () => { const v = curSel(); if (v) openSheet('compose', { sel: v, ask: false }); });
+$('#selAsk').addEventListener('click', () => { const v = curSel(); if (v) openSheet('compose', { sel: v, ask: true }); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { flushTime(); flushProgress(); } });
 addEventListener('pagehide', () => { flushTime(); flushProgress(); });
 
