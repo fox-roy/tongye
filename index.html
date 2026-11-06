@@ -168,7 +168,12 @@ i.tag.ai { background: var(--ai-bg); color: var(--ai-ink); }
 .selbar .in { gap: 6px; }
 .selbar { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
 .selbar .btn { white-space: nowrap; padding: 8px 10px; min-height: 40px; flex: none; }
-@media (max-width: 460px) { .selbar .cnt { display: none; } .selbar .in { justify-content: space-between; } .selbar .btn { flex: 1; padding: 8px 4px; } }
+.selbar .in { flex-wrap: wrap; }
+.selbar .prev { flex: 0 0 100%; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.selbar .prev .cnt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+.selbar .prev .btn { min-height: 30px; padding: 4px 12px; flex: none; }
+@media (max-width: 460px) { .selbar .btn { flex: 1 1 18%; padding: 8px 4px; } .selbar .prev .btn { flex: none; } }
+mark.hl.pend { background: color-mix(in srgb, var(--ai-line) 30%, transparent); box-shadow: inset 0 -2px 0 var(--ai-line); }
 .selbar .cnt { color: var(--muted); font-size: 12px; margin-right: auto; white-space: nowrap; }
 
 
@@ -564,7 +569,7 @@ html[data-deco="gothic"] .gsearch { border-radius: 2px; border-color: var(--fg);
 
 <div class="selbar" id="selbar" hidden>
   <div class="in">
-    <span class="cnt" id="selCnt"></span>
+    <div class="prev"><span class="cnt" id="selCnt"></span><button class="btn ghost small" id="selCancel" type="button">取消</button></div>
     <button class="btn" id="selLine" type="button">划线</button>
     <button class="btn" id="selNote" type="button">写想法</button>
     <button class="btn" id="selCard" type="button">做卡片</button>
@@ -1958,6 +1963,7 @@ async function openBook(b) {
   applyAiVisibility();
 }
 async function showChapter(c, p, opt) {
+  if (S.pend) hideSel();
   const token = ++S.nav;
   c = clamp(c, 0, S.book.nCh - 1);
   const chap = await loadChapter(S.book, c);
@@ -2144,8 +2150,8 @@ function paintPara(el, i, notes) {
     }
     if (!sg.cover.length) frag.append(node);
     else {
-      const me = sg.cover.some(n => n.by === 'me'), ai = sg.cover.some(n => n.by === 'ai');
-      frag.append(h('mark', { class: 'hl' + (me ? ' me' : '') + (ai ? ' ai' : ''), dataset: { n: sg.cover.map(n => n.id).join(',') } }, node));
+      const me = sg.cover.some(n => n.by === 'me'), ai = sg.cover.some(n => n.by === 'ai'), pe = sg.cover.some(n => n.by === 'pend');
+      frag.append(h('mark', { class: 'hl' + (me ? ' me' : '') + (ai ? ' ai' : '') + (pe ? ' pend' : ''), dataset: { n: sg.cover.filter(n => n.by !== 'pend').map(n => n.id).join(',') } }, node));
     }
     const ending = notes.filter(n => n.e === sg.b && n.msgs.length);
     for (const who of ['me', 'ai']) {
@@ -2162,6 +2168,8 @@ function notesByPara() {
     if (!m.has(n.p)) m.set(n.p, []);
     m.get(n.p).push(n);
   }
+  const pd = S.pend;
+  if (pd && S.pendPaint && pd.ch === S.ch) { if (!m.has(pd.p)) m.set(pd.p, []); m.get(pd.p).push(pd); }
   for (const a of m.values()) a.sort((x, y) => x.s - y.s);
   return m;
 }
@@ -2195,22 +2203,25 @@ parasEl().addEventListener('click', e => {
 /* ---------- selection ---------- */
 let selT = 0;
 document.addEventListener('selectionchange', () => { clearTimeout(selT); selT = setTimeout(onSel, 180); });
-const BUILD = '2026.11.06-a';
+const BUILD = '2026.11.06-b';
 let selLock = 0, selSnap = null;
-function hideSel() { S.sel = null; $('#selbar').hidden = true; }
-const curSel = () => { const v = S.sel || (Date.now() - selLock < 3000 ? selSnap : null); if (!v) toast('选区丢了，重新选一下。'); return v; };
+function hideSel() {
+  const was = S.pendPaint;
+  S.sel = null; S.pend = null; S.pendPaint = false; selSnap = null; $('#selbar').hidden = true;
+  if (was && S.chap) paintAll();
+}
+const curSel = () => { const v = S.sel || selSnap; if (!v) toast('选区丢了，重新选一下。'); return v; };
 function closestPara(node) {
   const el = node && (node.nodeType === 1 ? node : node.parentElement);
   return el && el.closest ? el.closest('#paras p[data-i]') : null;
 }
 function onSel() {
-  if (S.sel && Date.now() - selLock < 2500) return;
   if (S.view !== 'reader' || S.sheet || !S.chap) return hideSel();
   const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return hideSel();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) { if (S.pend) return; return hideSel(); }
   const r = sel.getRangeAt(0);
   const pA = closestPara(r.startContainer);
-  if (!pA) return hideSel();
+  if (!pA) { if (S.pend) return; return hideSel(); }
   const pB = closestPara(r.endContainer);
   const idx = Number(pA.dataset.i);
   const text = S.chap.p[idx];
@@ -2221,9 +2232,11 @@ function onSel() {
   e = Math.min(e, s + 400);
   while (s < e && /\s/.test(text[s])) s++;
   while (e > s && /\s/.test(text[e - 1])) e--;
-  if (e - s < 1) return hideSel();
+  if (e - s < 1) { if (S.pend) return; return hideSel(); }
   S.sel = { p: idx, s, e, q: text.slice(s, e) };
-  $('#selCnt').textContent = '选中 ' + (e - s) + ' 字';
+  if (S.pendPaint) { S.pendPaint = false; S.pend = null; paintAll(); }
+  S.pend = { id: 'pend', ch: S.ch, p: idx, s, e, by: 'pend', msgs: [] };
+  $('#selCnt').textContent = '选中：' + clip(text.slice(s, e).replace(/\s+/g, ' '), 40) + '（' + (e - s) + ' 字）';
   $('#selbar').hidden = false;
 }
 function clearSelection() { const s = window.getSelection(); if (s) s.removeAllRanges(); hideSel(); }
@@ -3667,6 +3680,7 @@ function layoutPages() {
 function pageOfPara(i) { const P = S.pg; return i > 0 && P.start.length ? P.start[clamp(i, 0, P.start.length - 1)] : 0; }
 function setPageNow(k) {
   hideFn();
+  if (S.pend && !S.pendPaintKeep) hideSel();
   const P = S.pg; P.page = clamp(k, 0, P.total - 1);
   $('#flow').style.transform = 'translate3d(' + (-P.page * P.vw) + 'px,0,0)';
 }
@@ -4482,9 +4496,13 @@ $('#selKeep').addEventListener('click', () => { const v = curSel(); if (v) openS
 $('#msBtn').addEventListener('click', () => { flushTime(); openSheet('miles'); });
 $('#aaBtn').addEventListener('click', () => openSheet('type'));
 $('#file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importFile(f); });
-['pointerdown', 'touchstart'].forEach(ev => $('#selbar').addEventListener(ev, () => { selLock = Date.now(); if (S.sel) selSnap = S.sel; }, { passive: true, capture: true }));
+['pointerdown', 'touchstart'].forEach(ev => $('#selbar').addEventListener(ev, () => {
+  if (S.sel) selSnap = S.sel;
+  if (S.pend && !S.pendPaint) { S.pendPaint = true; paintAll(); }
+}, { passive: true, capture: true }));
+$('#selCancel').addEventListener('click', () => clearSelection());
 const keepSel = e => e.preventDefault();
-['selLine', 'selNote', 'selAsk', 'selCard', 'selTr', 'selKeep'].forEach(id => $('#' + id).addEventListener('mousedown', keepSel));
+['selLine', 'selNote', 'selAsk', 'selCard', 'selTr', 'selKeep', 'selCancel'].forEach(id => $('#' + id).addEventListener('mousedown', keepSel));
 $('#selLine').addEventListener('click', async () => {
   const sel = curSel(); if (!sel) return;
   try { await createNote(sel, ''); clearSelection(); } catch (e) { toast(e && e.code === 'quota_exceeded' ? '存储满了，删掉一本旧书再试。' : '没存上，再试一次。'); }
