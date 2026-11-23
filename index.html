@@ -143,11 +143,16 @@ h1, h2, h3, p { margin: 0; }
 #paras p.fq { margin-left: 1.4em; margin-right: .6em; padding-left: .9em; border-left: 2px solid var(--line); text-indent: 0; font-size: .96em; }
 #paras p.fv1 { text-indent: 0; text-align: left; margin-bottom: .1em; padding-left: 1em; }
 #paras p.fv2 { text-indent: 0; text-align: left; padding-left: 1em; }
-#paras b { font-weight: 700; } #paras em { font-style: italic; } #paras u { text-underline-offset: .15em; }
+#paras b { font-weight: 700; } #paras b.bio { font-weight: 800; } #paras em { font-style: italic; } #paras u { text-underline-offset: .15em; }
 #paras sup, #paras sub { font-size: .7em; line-height: 0; }
 #paras .sc { font-variant: small-caps; } #paras .uc { text-transform: uppercase; }
 #paras a.fnref { color: var(--ai-ink); cursor: pointer; text-decoration: none; padding: 0 .15em; font-weight: 600; }
 .fnpop { position: fixed; z-index: 60; width: min(86vw, 340px); max-height: 42vh; overflow: auto; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.28); font: 400 14px/1.7 var(--f-ui); animation: fnin .18s ease-out both; }
+.cvfly { position: fixed; z-index: 90; pointer-events: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); background: var(--surface); will-change: left, top, width, height; }
+.cvfly img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@keyframes vfade { from { opacity: 0; } to { opacity: 1; } }
+.vfade { animation: vfade .26s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .vfade { animation: none; } }
 @keyframes fnin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .fnpop .fnh { font-size: 11px; letter-spacing: .12em; color: var(--muted); margin-bottom: 4px; }
 #paras p { font: 400 var(--fs)/var(--lh) var(--f-read); text-indent: var(--indent); margin: 0 0 var(--pgap); overflow-wrap: anywhere; text-align: var(--align); }
@@ -260,6 +265,17 @@ body.pg #pgmark[hidden] { display: none; }
 body.imm .rbar { transform: translateY(-110%); opacity: 0; pointer-events: none; }
 .rbar { transition: transform .22s ease, opacity .22s ease; }
 .sheet.full .panel { height: 92%; max-height: 92%; }
+/* frosted glass: panels, footnote popups and the selection bar let the page show through a little */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sheet .panel { background-color: color-mix(in srgb, var(--surface) 90%, transparent); -webkit-backdrop-filter: blur(16px) saturate(1.15); backdrop-filter: blur(16px) saturate(1.15); }
+  .fnpop, .selbar { background-color: color-mix(in srgb, var(--surface) 84%, transparent); -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15); }
+}
+/* the table of contents slides in from the left and leaves the text visible on the right */
+@keyframes slidein { from { transform: translateX(-28px); opacity: .5; } to { transform: none; opacity: 1; } }
+.sheet.side .back { background: rgba(10, 14, 13, .2); }
+html:not(#x) .sheet.side .panel { left: 0; right: auto; top: 0; bottom: 0; width: min(80vw, 340px); max-width: none; max-height: none; margin: 0; border-radius: 0 16px 16px 0; border-top: 0; border-right: 1px solid var(--line); box-shadow: 8px 0 30px rgba(0, 0, 0, .18); animation: slidein .2s cubic-bezier(.22, .8, .3, 1); padding-top: max(10px, env(safe-area-inset-top, 0px)); }
+html:not(#x) .sheet.side .panel::before { display: none; }
+@media (prefers-reduced-motion: reduce) { .sheet.side .panel { animation: none !important; } }
 .tl { position: relative; display: grid; gap: 18px; padding-left: 62px; }
 .tl::before { content: ""; position: absolute; left: 21px; top: 14px; bottom: 0; border-left: 1px dashed var(--line); }
 .tl-now { position: relative; color: var(--muted); font-size: 13px; padding: 0 0 4px; }
@@ -329,6 +345,27 @@ html[data-deco="archive"] .tk-cv, html[data-deco="archive"] .cover { border-radi
 html[data-deco="archive"] .tl-d span { border-radius: 0; }
 html[data-deco="archive"] .spine { border-radius: 0; filter: saturate(.5) contrast(1.06); }
 html[data-deco="archive"] .gsearch { border-radius: 2px; border-color: color-mix(in srgb, var(--fg) 55%, transparent); }
+html[data-deco="ink"] { --seal: #BE3A30; --vine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='22' viewBox='0 0 200 22'%3E%3Cpath d='M3 12 C 38 6, 92 16, 150 9 C 172 7, 190 9, 197 11 C 188 12, 170 13, 150 14 C 92 19, 40 15, 3 12 Z' fill='%23000'/%3E%3Ccircle cx='168' cy='4' r='1.6' fill='%23000'/%3E%3Ccircle cx='176' cy='18' r='1.1' fill='%23000'/%3E%3C/svg%3E"); }
+html[data-deco="ink"] .lib-head .mark { letter-spacing: .12em; }
+html[data-deco="ink"] .lib-head .mark { position: relative; }
+html[data-deco="ink"] .lib-head .mark::after { content: "阅"; position: absolute; left: 100%; top: .35em; display: block; margin-left: 10px; width: 22px; height: 22px; line-height: 22px; text-align: center; font: 700 12px/22px "Songti SC", "Noto Serif CJK SC", serif; letter-spacing: 0; color: #F4EBD9; background: var(--seal); border-radius: 2px; transform: rotate(-5deg); box-shadow: 0 0 0 1px var(--seal), inset 0 0 0 1px rgba(255,255,255,.35); }
+html[data-deco="ink"] .lib-sub::after, html[data-deco="ink"] #libBody::after { -webkit-mask: var(--vine) no-repeat center / min(100%, 380px) 22px; mask: var(--vine) no-repeat center / min(100%, 380px) 22px; opacity: .8; }
+html[data-deco="ink"] .tlc, html[data-deco="ink"] #libBody .pick, html[data-deco="ink"] .stat3 .tile {
+  border-radius: 1px; border: 1px solid color-mix(in srgb, var(--fg) 48%, transparent); outline: none; box-shadow: 3px 3px 0 color-mix(in srgb, var(--fg) 14%, transparent);
+  background: linear-gradient(var(--seal), var(--seal)) left 0 top 14px / 3px 22px no-repeat, radial-gradient(150px 70px at 100% 0, color-mix(in srgb, var(--fg) 8%, transparent), transparent), var(--surface);
+}
+html[data-deco="ink"] .tlc.first { background: linear-gradient(var(--seal), var(--seal)) left 0 top 14px / 3px 22px no-repeat, radial-gradient(150px 70px at 100% 0, color-mix(in srgb, var(--fg) 8%, transparent), transparent), var(--surface); }
+html[data-deco="ink"] .tlc { padding: 20px 20px 15px; }
+html[data-deco="ink"] .today { border-block: 3px double color-mix(in srgb, var(--fg) 58%, transparent); }
+html[data-deco="ink"] .sheet .panel { border-radius: 0; border-top: 3px double color-mix(in srgb, var(--fg) 58%, transparent); }
+html[data-deco="ink"] .sheet .panel::before { content: ""; display: block; width: 9px; height: 9px; margin: -2px auto 8px; background: var(--seal); transform: rotate(45deg); }
+html[data-deco="ink"] .btn, html[data-deco="ink"] .gsearch { border-radius: 2px; }
+html[data-deco="ink"] .tk-cv, html[data-deco="ink"] .cover, html[data-deco="ink"] .spine { border-radius: 1px; }
+html[data-deco="ink"] .spine { filter: saturate(.55) contrast(1.05); }
+html[data-deco="ink"] .tl-d span { border-radius: 1px; }
+html[data-deco="ink"] .ch-title::before { content: ""; display: block; width: 76px; height: 12px; margin: 0 auto 12px; background: var(--fg); opacity: .72; -webkit-mask: var(--vine) no-repeat center / 100% 100%; mask: var(--vine) no-repeat center / 100% 100%; }
+html[data-deco="ink"] body.pg #pgnum::before, html[data-deco="ink"] body.pg #pgnum::after { width: 4px; height: 4px; border-radius: 50%; background: var(--seal); border: 0; opacity: .85; }
+html[data-deco="ink"] body.pg #pgHead { background: linear-gradient(var(--fg), var(--fg)) center bottom / min(70%, 420px) 1px no-repeat; }
 html[data-deco="vintage"] .tlc, html[data-deco="vintage"] #libBody .pick, html[data-deco="vintage"] .stat3 .tile { border: 1px solid color-mix(in srgb, var(--fg) 38%, transparent); outline: 1px solid color-mix(in srgb, var(--fg) 20%, transparent); outline-offset: -5px; border-radius: 6px; box-shadow: none; }
 html[data-deco="vintage"] .today { border-block: 3px double color-mix(in srgb, var(--fg) 45%, transparent); }
 html[data-deco="vintage"] .lib-sub::after, html[data-deco="vintage"] #libBody::after { opacity: .45; }
@@ -1214,6 +1251,7 @@ const dlShim = {
 
 const relayCfg = () => { try { return JSON.parse(localStorage.getItem('tongye.api') || '{}') || {}; } catch (e) { return {}; } };
 const relayReady = () => { const c = relayCfg(); return !!(c.base && c.key && c.model); };
+let lastTrunc = false;
 async function callLLM(prompt, o) {
   o = o || {};
   const c = relayCfg();
@@ -1225,7 +1263,7 @@ async function callLLM(prompt, o) {
     : { 'content-type': 'application/json', authorization: 'Bearer ' + c.key };
   const stream = !!o.onText;
   const body = anth
-    ? { model: c.model, max_tokens: 2000, stream, messages: [{ role: 'user', content: prompt }] }
+    ? { model: c.model, max_tokens: 6000, stream, messages: [{ role: 'user', content: prompt }] }
     : { model: c.model, stream, messages: [{ role: 'user', content: prompt }] };
   let res;
   try { res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: o.signal }); }
@@ -1239,7 +1277,9 @@ async function callLLM(prompt, o) {
     throw { code, message: res.status + ' ' + t };
   }
   let text = '';
+  lastTrunc = false;
   const piece = j => {
+    if (j && ((j.delta && j.delta.stop_reason === 'max_tokens') || (j.choices && j.choices[0] && j.choices[0].finish_reason === 'length'))) lastTrunc = true;
     if (!j) return '';
     if (j.type === 'content_block_delta' && j.delta && typeof j.delta.text === 'string') return j.delta.text;
     const ch = j.choices && j.choices[0];
@@ -1265,6 +1305,7 @@ async function callLLM(prompt, o) {
       }
     } else {
       const j = await res.json();
+      if (j && (j.stop_reason === 'max_tokens' || (j.choices && j.choices[0] && j.choices[0].finish_reason === 'length'))) lastTrunc = true;
       if (anth) text = (j.content || []).map(x => x.text || '').join('');
       else text = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
       if (stream && text) o.onText({ text, delta: text });
@@ -1299,10 +1340,10 @@ function parseLooseJson(t) {
   const a = t.indexOf('{'), b = t.lastIndexOf('}');
   if (a >= 0 && b > a) tries.push(t.slice(a, b + 1));
   for (const s of tries) { try { return JSON.parse(s); } catch (e) {} }
-  throw { code: 'invalid_json', message: 'no json', text: t };
+  throw { code: lastTrunc ? 'truncated' : 'invalid_json', message: lastTrunc ? 'cut off by max_tokens' : 'no json', text: t };
 }
 function makeSample() {
-  const f = async (input, o) => { const text = await callLLM(String(input), o); return { text, truncated: false }; };
+  const f = async (input, o) => { const text = await callLLM(String(input), o); return { text, truncated: lastTrunc }; };
   f.json = async (input, o) => parseLooseJson(await callLLM(String(input), Object.assign({}, o, { onText: null })));
   return f;
 }
@@ -1521,7 +1562,7 @@ const S = {
   ai: { busy: false, ctl: null, pending: null }, sel: null, sheet: null, nav: 0,
   bm: [], recaps: {}, allNotes: [], pg: { page: 0, total: 1, start: [], end: [], vw: 0 }, notesTab: 'all', drafts: {}, canAi: false, canDl: false, imp: null, confirmDel: null
 };
-const PG = { busy: false, id: null, mode: '', dir: 0, dx: 0, layer: null, dragged: 0 };
+const PG = { q: 0, busy: false, id: null, mode: '', dir: 0, dx: 0, layer: null, dragged: 0 };
 let db = null, sample = null, downloads = null, uid = null, root = null;
 const chunkCache = new Map();
 
@@ -1554,11 +1595,14 @@ function toast(msg) {
   clearTimeout(toastT);
   toastT = setTimeout(() => { t.hidden = true; }, 3200);
 }
+function fadeIn(el) { if (!el) return; el.classList.remove('vfade'); void el.offsetWidth; el.classList.add('vfade'); setTimeout(() => el.classList.remove('vfade'), 320); }
 function setView(v) {
+  const was = S.view;
   S.view = v;
   $('#lib').hidden = v !== 'lib';
   $('#addbar').hidden = v !== 'lib' || !db;
   $('#reader').hidden = v !== 'reader';
+  if (was && was !== v) fadeIn(v === 'reader' ? $('#reader') : $('#lib'));
   if (v !== 'reader') hideSel();
   updateBgLayer();
   applyFlow();
@@ -1653,7 +1697,7 @@ function genCover(b) {
   return url;
 }
 function coverEl(b) {
-  return h('div', { class: 'cover' }, h('img', { src: b.cover || genCover(b), alt: '' }));
+  return h('div', { class: 'cover', dataset: { bid: b.id } }, h('img', { src: b.cover || genCover(b), alt: '' }));
 }
 function bookCard(b) {
   const pr = S.progress[b.id];
@@ -1703,7 +1747,7 @@ function spineEl(b) {
   const hs = hashStr(b.title), hue = hs % 360, sat = 22 + (hs >> 3) % 22, lig = 24 + (hs >> 6) % 20;
   const w = spineW(b), hgt = spineH(b), v = (hs >> 9) % 3;
   const t = clip(b.title, 18), fs = t.length > 14 ? 11 : t.length > 9 ? 12 : 14;
-  const el = h('span', { class: 'spine v' + v });
+  const el = h('span', { class: 'spine v' + v, dataset: { bid: b.id } });
   el.style.cssText = 'width:' + w + 'px;height:' + hgt + 'px;--sp-bg:hsl(' + hue + ' ' + sat + '% ' + lig + '%);--sp-ink:' + (lig > 36 ? '#2a2118' : '#F3E9D2');
   const tt = h('span', { class: 'ttl', text: t }); tt.style.fontSize = fs + 'px';
   el.append(tt);
@@ -1795,7 +1839,7 @@ function renderSpineShelf(el) {
 let libRzT = 0;
 addEventListener('resize', () => { clearTimeout(libRzT); libRzT = setTimeout(() => { if (S.view === 'lib' && libView() === 'spine') renderLibrary(); }, 250); });
 const libView = () => store.get('tongye.libview') === 'grid' ? 'grid' : 'spine';
-const shelfMode = () => { const v = store.get('tongye.shelf'); if (v === 'paper' || v === 'wood') return v; const t = curSkin(); return t && (t.deco === 'gothic' || t.deco === 'archive') ? 'paper' : 'wood'; };
+const shelfMode = () => { const v = store.get('tongye.shelf'); if (v === 'paper' || v === 'wood') return v; const t = curSkin(); return t && (t.deco === 'gothic' || t.deco === 'archive' || t.deco === 'ink') ? 'paper' : 'wood'; };
 function applyShelf() { document.body.classList.toggle('pshelf', shelfMode() === 'paper'); }
 function renderLibrary() {
   const el = $('#libBody');
@@ -1932,7 +1976,27 @@ async function loadChapter(book, c) {
   }
   return chs[c - book.ds[d]];
 }
+/* the cover grows out of the shelf into the reader, and shrinks back into it on the way out */
+function bookSrcRect(id) {
+  const q = sel => { const e = document.querySelector('#lib ' + sel + '[data-bid="' + id + '"]'); if (!e) return null; const r = e.getBoundingClientRect(); return r.width > 4 && r.height > 4 && r.bottom > 0 && r.top < innerHeight ? r : null; };
+  return q('.cover') || q('.spine');
+}
+function flyCover(b, from, to, ms) {
+  if (pgReduced() || !from || !document.body.animate) return null;
+  const vw = innerWidth, vh = innerHeight;
+  const box = r => ({ left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: '3px' });
+  const full = { left: '0px', top: '0px', width: vw + 'px', height: vh + 'px', borderRadius: '0px' };
+  const el = h('div', { class: 'cvfly' }, h('img', { src: b.cover || genCover(b), alt: '' }));
+  document.body.append(el);
+  const a = el.animate([from === 'full' ? full : box(from), to === 'full' ? full : box(to)], { duration: ms, easing: 'cubic-bezier(.22,.8,.3,1)', fill: 'forwards' });
+  const gone = () => { try { el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }).finished.then(() => el.remove(), () => el.remove()); } catch (e) { el.remove(); } };
+  return { el, moved: a.finished.catch(() => {}), done: async () => { await a.finished.catch(() => {}); gone(); } };
+}
 async function openBook(b) {
+  const fly = flyCover(b, bookSrcRect(b.id), 'full', 340);
+  try { await openBook0(b); } finally { if (fly) fly.done(); }
+}
+async function openBook0(b) {
   S.book = b; S.toc = []; S.notes = []; S.allNotes = []; S.chap = null; S.memo = ''; S.bm = []; S.recaps = {};
   S.prog = { ch: 0, p: 0, mc: 0, mp: 0, pct: 0, ai: null };
   setView('reader');
@@ -1964,7 +2028,7 @@ async function openBook(b) {
 }
 async function showChapter(c, p, opt) {
   if (S.pend) hideSel();
-  const token = ++S.nav;
+  const token = ++S.nav, firstShow = !S.chap;
   c = clamp(c, 0, S.book.nCh - 1);
   const chap = await loadChapter(S.book, c);
   if (token !== S.nav) return;
@@ -1990,6 +2054,7 @@ async function showChapter(c, p, opt) {
     if (p > 0) scrollToPara(p, false); else window.scrollTo(0, 0);
     setTimeout(trackScroll, 60);
   }
+  if (firstShow) fadeIn($('#art'));
   markDirty();
   loadChapter(S.book, c + 1).catch(() => {});
 }
@@ -2060,15 +2125,18 @@ async function flushProgress() {
   finally { saving = false; }
 }
 function leaveReader() {
+  const gone0 = S.book && S.book.id;
   flushTime();
   flushProgress();
   if (S.ai.ctl) S.ai.ctl.abort();
   if (S.notesUnsub) { S.notesUnsub(); S.notesUnsub = null; }
   S.nav++; S.book = null; S.chap = null; S.notes = []; S.allNotes = []; updateScrub();
   closeSheet();
+  const gb = S.books.find(x => x.id === gone0);
   setView('lib');
   renderLibrary();
   loadProgressFor(S.books);
+  if (gb) { const r = bookSrcRect(gb.id); const f = r && flyCover(gb, 'full', r, 320); if (f) f.done(); }
 }
 
 /* ---------- source typesetting ---------- */
@@ -2132,15 +2200,26 @@ parasEl().addEventListener('click', e => {
 
 /* ---------- highlights ---------- */
 const authors = n => new Set(n.msgs.map(m => m.by));
+function bioRanges(text) {
+  const out = [], re = /[A-Za-z\u00C0-\u024F]+(?:['\u2019][A-Za-z]+)?/g;
+  let m;
+  while ((m = re.exec(text))) {
+    const n = m[0].replace(/['\u2019]/g, '').length;
+    const k = n <= 3 ? 1 : n <= 5 ? 2 : Math.ceil(n * 0.45);
+    out.push([m.index, m.index + k]);
+  }
+  return out;
+}
 function paintPara(el, i, notes) {
   const text = S.chap.p[i];
-  const sig = notes.map(n => [n.id, n.s, n.e, n.by, [...authors(n)].sort().join('')].join(':')).join('|');
+  const bio = RD.bionic ? bioRanges(text) : null;
+  const sig = notes.map(n => [n.id, n.s, n.e, n.by, [...authors(n)].sort().join('')].join(':')).join('|') + (bio && bio.length ? '#b' : '');
   if (el._sig === sig && el.firstChild) return;
   el._sig = sig;
   const fr = S.chap.f && S.chap.f[i] && S.chap.f[i].r;
-  if (!notes.length && !fr) { el.textContent = text; return; }
+  if (!notes.length && !fr && !(bio && bio.length)) { el.textContent = text; return; }
   const frag = document.createDocumentFragment();
-  const extra = fr ? fr.map(r => ({ s: r[0], e: r[1] })) : null;
+  const extra = (fr || (bio && bio.length)) ? (fr || []).map(r => ({ s: r[0], e: r[1] })).concat((bio || []).map(r => ({ s: r[0], e: r[1] }))) : null;
   for (const sg of segmentPara(text, notes, extra)) {
     let node = document.createTextNode(text.slice(sg.a, sg.b));
     if (fr) {
@@ -2148,6 +2227,7 @@ function paintPara(el, i, notes) {
       for (const r of fr) if (r[0] <= sg.a && r[1] >= sg.b) { for (const c of r[2]) if (!fl.includes(c)) fl += c; if (r[3]) fid = r[3]; }
       if (fl) node = fmtWrap(node, fl, fid);
     }
+    if (bio && bio.some(r => r[0] <= sg.a && r[1] >= sg.b)) { const bb = document.createElement('b'); bb.className = 'bio'; bb.append(node); node = bb; }
     if (!sg.cover.length) frag.append(node);
     else {
       const me = sg.cover.some(n => n.by === 'me'), ai = sg.cover.some(n => n.by === 'ai'), pe = sg.cover.some(n => n.by === 'pend');
@@ -2203,7 +2283,7 @@ parasEl().addEventListener('click', e => {
 /* ---------- selection ---------- */
 let selT = 0;
 document.addEventListener('selectionchange', () => { clearTimeout(selT); selT = setTimeout(onSel, 180); });
-const BUILD = '2026.11.06-b';
+const BUILD = '2026.11.18-e';
 let selLock = 0, selSnap = null;
 function hideSel() {
   const was = S.pendPaint;
@@ -2268,8 +2348,9 @@ function buildSheet() {
   const k = S.sheet.kind;
   const body = $('#sheetBody');
   const keep = body.scrollTop;
-  const b = ({ toc: buildToc, notes: buildNotes, thread: buildThread, compose: buildCompose, settings: buildSettings, stats: buildStats, keep: buildKeep, keepbox: buildKeepBox, type: buildType, skinEdit: buildSkinEdit, card: buildCard, bookmenu: buildBookMenu, import: buildImport, busy: buildBusy, recap: buildRecap, translate: buildTranslate, miles: buildMiles, groups: buildGroups, book: buildBook, bookmenu: buildBookMgr, finish: buildFinish, gfind: buildGFind })[k]();
+  const b = ({ toc: buildToc, notes: buildNotes, thread: buildThread, compose: buildCompose, settings: buildSettings, stats: buildStats, year: buildYear, keep: buildKeep, keepbox: buildKeepBox, type: buildType, skinEdit: buildSkinEdit, card: buildCard, bookmenu: buildBookMenu, import: buildImport, busy: buildBusy, recap: buildRecap, translate: buildTranslate, miles: buildMiles, groups: buildGroups, book: buildBook, bookmenu: buildBookMgr, finish: buildFinish, gfind: buildGFind })[k]();
   $('#sheet').classList.toggle('full', k === 'book' || k === 'bookmenu' || k === 'miles');
+  $('#sheet').classList.toggle('side', k === 'toc' && S.view === 'reader');
   $('#sheetTitle').textContent = b.title;
   body.replaceChildren(b.el);
   if (b.scroll) b.scroll(body); else body.scrollTop = keep;
@@ -2515,6 +2596,7 @@ function buildSettings() {
   el.append(apiBlock());
   el.append(backupBlock());
   el.append(h('p', { class: 'fine', text: '克总只会看到你读到的位置之前的文字。每次批注或回复都会按你的 key 计费。书和批注都存在这台手机上。' }));
+  const elog = errLogBox(); if (elog) el.append(elog);
   el.append(h('p', { class: 'fine', style: 'text-align:center;margin-top:14px', text: '版本 ' + BUILD }));
   return { title: '设置', el };
 }
@@ -2522,10 +2604,40 @@ function buildBookMenu() {
   const b = S.books.find(x => x.id === S.sheet.id);
   if (!b) return { title: '书', el: h('p', { class: 'fine', text: '这本书不在了。' }) };
   const sure = S.confirmDel === b.id;
+  const tIn = h('input', { type: 'text', maxlength: '80', placeholder: '书名', style: 'width:100%' });
+  const aIn = h('input', { type: 'text', maxlength: '60', placeholder: '作者（可以留空）', style: 'width:100%' });
+  tIn.value = b.title || ''; aIn.value = b.author || '';
+  const afterEdit = () => {
+    delete SPC[b.id]; try { store.set('tongye.spc', JSON.stringify(SPC)); } catch (e) {}
+    renderLibrary();
+    if (S.book && S.book.id === b.id) { S.book.title = b.title; S.book.author = b.author; if (b.cover) S.book.cover = b.cover; else delete S.book.cover; }
+  };
+  const saveInfo = async () => {
+    const t = clip(tIn.value.trim(), 80), a = clip(aIn.value.trim(), 60);
+    if (!t) return toast('书名不能是空的。');
+    try { await dbCall(() => bookDoc(b.id).update({ title: t, author: a })); } catch (e) { return toast('没存上，再试一次。'); }
+    b.title = t; b.author = a; afterEdit(); toast('改好了'); buildSheet();
+  };
+  const picker = h('input', { type: 'file', accept: 'image/*', hidden: true });
+  picker.addEventListener('change', async () => {
+    const f = picker.files && picker.files[0]; if (!f) return;
+    try {
+      const url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+      const small = await shrinkCover(url);
+      if (!small) return toast('这张图没读出来。');
+      await dbCall(() => bookDoc(b.id).update({ cover: small }));
+      b.cover = small; afterEdit(); toast('封面换好了'); buildSheet();
+    } catch (e) { toast('封面没换成。'); }
+  });
   return {
     title: clip(b.title, 18),
     el: h('div', { style: 'display:grid;gap:12px' },
       h('p', { class: 'fine', text: b.nCh + ' 章 · 约 ' + Math.round(b.chars / 1000) / 10 + ' 万字' }),
+      h('div', { style: 'display:grid;gap:8px' }, h('div', { class: 'lbl', text: '书名和作者' }), tIn, aIn,
+        h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap' },
+          h('button', { class: 'btn', type: 'button', text: '保存', onclick: saveInfo }),
+          h('button', { class: 'btn ghost', type: 'button', text: '换封面', onclick: () => picker.click() }),
+          b.cover ? h('button', { class: 'btn ghost', type: 'button', text: '用自动封面', onclick: async () => { try { await dbCall(() => bookDoc(b.id).update({ cover: '' })); b.cover = ''; afterEdit(); buildSheet(); toast('换回自动封面了'); } catch (e) { toast('没成功。'); } } }) : null), picker),
       GRP.list.length ? h('div', { style: 'display:grid;gap:8px' }, h('div', { class: 'lbl', text: '放在哪个分组' }), h('div', { class: 'seg' }, ...[{ id: '', name: '未分组' }, ...GRP.list].map(g => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(grpOf(b.id) === g.id), text: g.name, onclick: () => { if (g.id) GRP.map[b.id] = g.id; else delete GRP.map[b.id]; grpSave(); buildSheet(); renderLibrary(); } })))) : null,
       S.stats.fin[b.id] ? h('button', { class: 'btn', type: 'button', text: '取消“读完”标记', onclick: () => { markFin(b.id, false); buildSheet(); } }) : null,
       h('button', { class: 'btn ' + (sure ? 'danger' : ''), type: 'button', text: sure ? '再点一次，连同批注一起删除' : '从书架删除', onclick: () => { if (!sure) { S.confirmDel = b.id; buildSheet(); } else { S.confirmDel = null; deleteBook(b); } } }))
@@ -2547,12 +2659,29 @@ function updateAiUi() {
   if (S.ai.busy) { b.append(h('span', { class: 'dot' }), '停'); b.setAttribute('aria-label', '停止'); }
   else { b.textContent = '克总'; b.setAttribute('aria-label', '请克总批注'); }
 }
+const ERRHINT = { network: '连不上中转（网络断了，或地址被浏览器拦了）', bad_key: 'key 不对或过期了', bad_url: '地址或模型名不对', upstream_error: '中转那边出错了' };
+function logAiErr(e) {
+  try {
+    const L = JSON.parse(store.get('tongye.errlog') || '[]');
+    L.unshift({ t: Date.now(), c: (e && e.code) || '?', m: String((e && e.message) || '').slice(0, 160) });
+    store.set('tongye.errlog', JSON.stringify(L.slice(0, 12)));
+  } catch (_) {}
+}
+function errLogBox() {
+  let L = []; try { L = JSON.parse(store.get('tongye.errlog') || '[]'); } catch (_) {}
+  if (!L.length) return null;
+  return h('details', { style: 'margin-top:14px;font-size:13px;color:var(--muted)' },
+    h('summary', { text: '最近的断线记录（' + L.length + '）' }),
+    ...L.map(x => h('div', { style: 'margin:6px 0;word-break:break-all', text: new Date(x.t).toLocaleString('zh-CN', { hour12: false }) + '　' + x.c + (x.m ? '　' + x.m : '') })),
+    h('button', { class: 'btn small ghost', type: 'button', text: '清空', onclick: () => { try { store.set('tongye.errlog', '[]'); } catch (_) {} buildSheet(); } }));
+}
 function aiErr(e) {
   const c = e && e.code;
   if (c === 'cancelled') return;
+  logAiErr(e);
   if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(c)) { sample = null; applyAiVisibility(); toast('这里用不了克总，已隐藏。'); return; }
-  const m = { bad_key: 'Key 不对，或者没有权限。去设置里检查。', bad_url: '地址或模型名不对。去设置里检查。', network: '连不上中转。检查地址和网络，或者接口没开跨域。', rate_limited: '叫得太勤了，等一会儿再试。', invalid_json: '克总这次没按格式回，再试一次。', refused: '克总这段没接，换一段试试。', prompt_too_large: '这段太长了。', session_expired: '登录过期了，刷新一下页面。', empty_completion: '克总没说话，再试一次。' }[c];
-  toast(m || '克总那边断了一下，再试试。');
+  const m = { bad_key: 'Key 不对，或者没有权限。去设置里检查。', bad_url: '地址或模型名不对。去设置里检查。', network: '连不上中转。检查地址和网络，或者接口没开跨域。', rate_limited: '叫得太勤了，等一会儿再试。', invalid_json: '克总这次没按格式回，再试一次。', refused: '克总这段没接，换一段试试。', prompt_too_large: '这段太长了。', session_expired: '登录过期了，刷新一下页面。', empty_completion: '克总没说话，再试一次。', truncated: '克总写得太长，被截断了，再试一次。' }[c];
+  toast(m || '克总那边断了一下：' + (ERRHINT[c] || c || '不明原因') + '。详情在设置最底下。');
 }
 const DENS = { low: { l: '少', n: '1 到 2' }, mid: { l: '适中', n: '2 到 5' }, high: { l: '多', n: '5 到 8' } };
 const personaLine = () => (S.stats.persona ? '你的设定（你就是这个人，不是在演）：\n' + S.stats.persona + '\n你的口吻、性格、在意的事、经历和喜好，都要实实在在带进你写的每一句话里。下面的格式和篇幅要求照旧。' : '');
@@ -2694,7 +2823,7 @@ async function askReply(noteId) {
 
 /* ---------- reading prefs ---------- */
 const isStandalone = () => typeof STANDALONE !== 'undefined';
-const RD = { font: 'serif', fs: 18, lh: 1.95, pgap: 0.85, gut: 16, align: 'justify', indent: 1, theme: 'auto', skin: '', flow: 'page', auto: 0, ahead: 3 };
+const RD = { font: 'serif', fs: 18, lh: 1.95, pgap: 0.85, gut: 16, align: 'justify', indent: 1, bionic: 0, theme: 'auto', skin: '', flow: 'page', auto: 0, ahead: 3 };
 const FONTS = {
   serif: '"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif',
   sans: '"Noto Sans SC","PingFang SC","Source Han Sans SC","Microsoft YaHei",sans-serif',
@@ -2732,6 +2861,7 @@ function applyRd() {
   }
   applySkin();
   applyFlow();
+  if (S.chap && S.view === 'reader') paintAll();
   relayoutSoon();
 }
 function buildType() {
@@ -2754,6 +2884,7 @@ function buildType() {
   el.append(seg('页边距', [[16, '窄'], [28, '中'], [42, '宽']], RD.gut, v => { RD.gut = v; }));
   el.append(seg('对齐', [['justify', '两端对齐'], ['left', '左对齐']], RD.align, v => { RD.align = v; }));
   el.append(seg('段首', [[1, '缩进两格'], [0, '不缩进']], RD.indent, v => { RD.indent = v; }));
+  el.append(seg('英文词首加粗', [[0, '关'], [1, '开']], RD.bionic ? 1 : 0, v => { RD.bionic = v; }));
   if (isStandalone()) {
     if (!curSkin()) el.append(seg('明暗模式', [['auto', '跟随系统'], ['light', '浅色'], ['dark', '深色']], RD.theme, v => { RD.theme = v; }));
     el.append(fontBlock());
@@ -2807,6 +2938,7 @@ function buildStats() {
   const any = hv.some(x => x > 0);
   el.append(h('section', { style: 'display:grid;gap:10px' }, h('div', { class: 'lbl', text: '一天里什么时候读' }), clockSvg(hv),
     h('p', { class: 'fine', style: 'text-align:center', text: any ? '最常在 ' + hv.indexOf(Math.max(...hv)) + ' 点前后读书。' : '从现在起读的时间会记在这里。' })));
+  el.append(h('button', { class: 'btn', type: 'button', text: '看今年的阅读卡片', onclick: () => openSheet('year') }));
   return { title: '阅读统计', el };
 }
 
@@ -2950,7 +3082,7 @@ function fillSkin(t) {
     bgImage: typeof t.bgImage === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(t.bgImage) ? t.bgImage : null,
     imgs: (() => { const o = {}, src = t.imgs || {}; for (const k of ['home', 'sheet', 'banner', 'frame']) o[k] = typeof src[k] === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(src[k]) ? src[k] : null; return o; })(),
     slice: clamp(Math.round(Number(t.slice) || 30), 8, 90),
-    deco: ['gothic', 'vintage', 'archive'].includes(t.deco) ? t.deco : 'none',
+    deco: ['gothic', 'vintage', 'archive', 'ink'].includes(t.deco) ? t.deco : 'none',
     dim: clamp(Number(t.dim) || 0, 0, 0.6),
     texture: TEXTURES.some(x => x[0] === t.texture) ? t.texture : 'none',
     chapter: CH_STYLES.some(x => x[0] === t.chapter) ? t.chapter : 'plain'
@@ -2964,7 +3096,8 @@ const BUILTIN = [
   { id: 'b:old', name: '旧书页·雅', mode: 'light', c: { bg: '#EFE4CC', fg: '#33291D', ai: '#8A4B2A', me: '#E0B04A' }, texture: 'grain', chapter: 'ornament', deco: 'vintage' },
   { id: 'b:paper', name: '米黄纸', mode: 'light', c: { bg: '#F3EAD3', fg: '#3A3126', ai: '#7A5C2E', me: '#E3B23C' }, texture: 'grain', chapter: 'rule' },
   { id: 'b:green', name: '护眼绿', mode: 'light', c: { bg: '#DCE8D4', fg: '#26382B', ai: '#3F7A55', me: '#D9C24A' }, chapter: 'center' },
-  { id: 'b:eink', name: '墨水屏', mode: 'light', c: { bg: '#E5E4E0', fg: '#1C1C1A', ai: '#4B4B48', me: '#C7B45A' }, texture: 'grain', chapter: 'plain' },
+  { id: 'b:eink', name: '墨水屏', mode: 'light', c: { bg: '#E5E4E0', fg: '#1C1C1A', ai: '#4B4B48', me: '#C7B45A' }, texture: 'grain', chapter: 'center', deco: 'ink' },
+  { id: 'b:inkn', name: '墨水屏·夜', mode: 'dark', c: { bg: '#151515', fg: '#D9D7D1', ai: '#B4AEA2', me: '#8F8665' }, texture: 'grain', chapter: 'center', deco: 'ink' },
   { id: 'b:mist', name: '雾蓝', mode: 'light', c: { bg: '#E4EAEE', fg: '#1E2933', ai: '#35648A', me: '#E0BE55' }, chapter: 'dropcap' },
   { id: 'b:dusk', name: '暖夜', mode: 'dark', c: { bg: '#1D1813', fg: '#CDBFA3', ai: '#C58A5B', me: '#D9B34F' }, texture: 'grain', chapter: 'ornament' },
   { id: 'b:night', name: '纯黑', mode: 'dark', c: { bg: '#000000', fg: '#B8B8B8', ai: '#7FA6B8', me: '#CDB04A' }, chapter: 'plain' }
@@ -3158,7 +3291,7 @@ function buildSkinEdit() {
   el.append(segRow('纸张纹理', TEXTURES, d.texture, v => { d.texture = v; }));
   el.append(segRow('章名样式', CH_STYLES, d.chapter, v => { d.chapter = v; }));
   d.imgs = d.imgs || { home: null, sheet: null, banner: null, frame: null };
-  el.append(segRow('装饰风格', [['none', '无'], ['gothic', '黑白哥特'], ['archive', '华饰档案'], ['vintage', '旧书页']], d.deco || 'none', v => { d.deco = v; }));
+  el.append(segRow('装饰风格', [['none', '无'], ['gothic', '黑白哥特'], ['archive', '华饰档案'], ['ink', '水墨'], ['vintage', '旧书页']], d.deco || 'none', v => { d.deco = v; }));
   const slot = (key, label, hint, maxSide) => {
     const id = 'skinSlot_' + key;
     const f = h('input', { type: 'file', accept: 'image/*', id, hidden: true });
@@ -3735,20 +3868,21 @@ async function flipTo(np, dir) {
   if (dir > 0) {
     const L = makeLayer(P.page);
     setPageNow(np);
-    const un = dimUnder(L, 0.16, 0, 280);
-    await slide(L, 0, -vw, 280);
+    const un = dimUnder(L, 0.16, 0, 250);
+    await slide(L, 0, -vw, 250);
     un(); L.remove();
   } else {
     const L = makeLayer(np);
-    const un = dimUnder(L, 0, 0.16, 280);
-    await slide(L, -vw, 0, 280);
+    const un = dimUnder(L, 0, 0.16, 250);
+    await slide(L, -vw, 0, 250);
     un(); setPageNow(np);
     L.remove();
   }
   reportPage();
 }
 async function turn(dir) {
-  if (PG.busy || !pgActive() || !S.chap) return;
+  if (!pgActive() || !S.chap) return;
+  if (PG.busy) { PG.q = dir; return; } /* a quick second tap is remembered instead of dropped */
   const P = S.pg, np = P.page + dir;
   PG.busy = true;
   try {
@@ -3759,10 +3893,10 @@ async function turn(dir) {
       if (c >= S.book.nCh) { toast('这本书读到头了。'); return; }
       const vw = P.vw, L = makeLayer(P.page);
       await showChapter(c, 0, { last: dir < 0 });
-      await slide(L, 0, dir > 0 ? -vw : vw, 280);
+      await slide(L, 0, dir > 0 ? -vw : vw, 250);
       L.remove();
     }
-  } finally { PG.busy = false; }
+  } finally { PG.busy = false; if (PG.q) { const d = PG.q; PG.q = 0; turn(d); } }
 }
 function pgPointerSetup() {
   const art = $('#art');
@@ -3823,7 +3957,7 @@ function pgPointerSetup() {
     if (e.target.closest('mark.hl, i.tag, button, a, .pglayer')) return;
     const sel = window.getSelection && window.getSelection();
     if (sel && !sel.isCollapsed) return;
-    if (S.sheet || PG.busy || !S.chap) return;
+    if (S.sheet || !S.chap) return;
     if (!pgActive()) { document.body.classList.toggle('imm'); return; }
     const x = e.clientX / window.innerWidth;
     if (x < 0.3) turn(-1); else if (x > 0.7) turn(1); else document.body.classList.toggle('imm');
@@ -3942,7 +4076,7 @@ function buildGFind() {
   let t = 0;
   const inp = h('input', { type: 'search', class: 'inp', placeholder: '搜所有书里的划线和批注', autocomplete: 'off', enterkeyhint: 'search' });
   inp.value = S.sheet.fq || '';
-  inp.addEventListener('input', () => { S.sheet.fq = inp.value; clearTimeout(t); t = setTimeout(() => runGFind(inp.value, box, stat), 280); });
+  inp.addEventListener('input', () => { S.sheet.fq = inp.value; clearTimeout(t); t = setTimeout(() => runGFind(inp.value, box, stat), 250); });
   setTimeout(() => { if (inp.value) runGFind(inp.value, box, stat); else { runGFind('', box, stat); inp.focus(); } }, 30);
   return { title: '搜批注', el: h('div', { style: 'display:grid;gap:10px' }, inp, stat, box) };
 }
@@ -3986,7 +4120,7 @@ function findPane() {
   const inp = h('input', { type: 'search', class: 'inp', placeholder: S.sheet.fg ? '搜所有书里的划线和批注' : '搜正文，也搜批注', autocomplete: 'off', enterkeyhint: 'search' });
   const go = () => (S.sheet.fg ? runGFind : runFind)(inp.value, box, stat);
   inp.value = S.sheet.fq || '';
-  inp.addEventListener('input', () => { S.sheet.fq = inp.value; clearTimeout(t); t = setTimeout(go, 280); });
+  inp.addEventListener('input', () => { S.sheet.fq = inp.value; clearTimeout(t); t = setTimeout(go, 250); });
   const scope = h('div', { class: 'seg' }, ...[[false, '这本书'], [true, '所有书的批注']].map(([v, l]) => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(!!S.sheet.fg === v), text: l, onclick: () => { S.sheet.fg = v; buildSheet(); } })));
   setTimeout(() => { if (inp.value || S.sheet.fg) go(); else inp.focus(); }, 30);
   return h('div', { style: 'display:grid;gap:10px' }, scope, inp, stat, box);
@@ -4209,6 +4343,97 @@ async function drawMiles(items) {
   });
   if (!single) { x.fillStyle = '#7a7684'; x.font = '22px ' + FONT; x.textAlign = 'center'; x.fillText('—— 同页 · 和克总一起读 ——', W / 2, H - M + 6); }
   return cv;
+}
+
+/* ---------- year in reading card ---------- */
+function yearStats(Y) {
+  const pre = Y + '-', days = S.stats.days, today = dayKey(new Date());
+  let total = 0, n = 0, best = 0, bestK = ''; const mon = Array(12).fill(0), yd = {};
+  for (const k of Object.keys(days)) {
+    if (!k.startsWith(pre)) continue;
+    const v = days[k] + (k === today ? T.pend : 0); yd[k] = v; total += v; mon[+k.slice(5, 7) - 1] += v;
+    if (v >= 60) n++;
+    if (v > best) { best = v; bestK = k; }
+  }
+  const per = {};
+  for (const k in S.stats.bd) { const i = k.lastIndexOf('|'); if (k.slice(i + 1).startsWith(pre)) per[k.slice(0, i)] = (per[k.slice(0, i)] || 0) + S.stats.bd[k]; }
+  const byId = id => S.books.find(b => b.id === id);
+  const fin = S.books.filter(b => S.stats.fin[b.id] && new Date(S.stats.fin[b.id]).getFullYear() === +Y).sort((a, b) => S.stats.fin[a.id] - S.stats.fin[b.id]);
+  const topId = Object.keys(per).filter(byId).sort((a, b) => per[b] - per[a])[0];
+  const hv = Array.from({ length: 24 }, (_, i) => S.stats.hours[i] || 0);
+  const peak = mon.indexOf(Math.max(...mon));
+  return { Y, total, n, best, bestK, mon, peak, streak: bestStreak(yd), fin, top: topId ? { b: byId(topId), sec: per[topId] } : null, nBooks: Object.keys(per).filter(byId).length, hour: hv.some(x => x > 0) ? hv.indexOf(Math.max(...hv)) : -1 };
+}
+async function drawYear(D) {
+  const FONT = '"Songti SC","Noto Serif CJK SC","Source Han Serif SC","Noto Serif SC",serif';
+  const W = 1080, H = 1700, M = 80, INK = '#2a2622', RED = '#B3202A', MUTE = '#8a7f72', LINE = '#d9d0c0';
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'); x.textBaseline = 'alphabetic';
+  const bg = x.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#F3EEE3'); bg.addColorStop(1, '#E9E2D3');
+  x.fillStyle = bg; x.fillRect(0, 0, W, H);
+  x.strokeStyle = INK; x.lineWidth = 2; x.strokeRect(36, 36, W - 72, H - 72); x.lineWidth = 1; x.strokeRect(46, 46, W - 92, H - 92);
+  const T0 = (t, X, Y, font, col, al) => { x.font = font; x.fillStyle = col; x.textAlign = al || 'left'; x.fillText(t, X, Y); };
+  const hm = sec => sec >= 3600 ? (Math.round(sec / 360) / 10) + ' 小时' : Math.max(1, Math.round(sec / 60)) + ' 分钟';
+  T0('T O N G Y E   ·   R E A D I N G   Y E A R', W / 2, 130, '24px ' + FONT, MUTE, 'center');
+  T0(String(D.Y), W / 2, 270, '700 150px ' + FONT, INK, 'center');
+  T0('我的阅读年', W / 2, 340, '44px ' + FONT, INK, 'center');
+  x.fillStyle = RED; x.save(); x.translate(W / 2, 384); x.rotate(Math.PI / 4); x.fillRect(-7, -7, 14, 14); x.restore();
+  // three big numbers
+  const cols = [[hm(D.total), '读了'], [D.n + ' 天', '翻开书的日子'], [D.streak + ' 天', '最长连续']];
+  cols.forEach(([v, k], i) => { const cx = M + (W - 2 * M) * (i + .5) / 3; T0(v, cx, 500, '700 56px ' + FONT, INK, 'center'); T0(k, cx, 546, '26px ' + FONT, MUTE, 'center'); });
+  x.strokeStyle = LINE; x.lineWidth = 1.5; x.beginPath(); x.moveTo(M, 590); x.lineTo(W - M, 590); x.stroke();
+  // months
+  T0('每个月读了多久', M, 650, '600 32px ' + FONT, INK);
+  const bx = M, bw = (W - 2 * M) / 12, top = 700, bh = 200, mx = Math.max(...D.mon, 1);
+  D.mon.forEach((v, i) => {
+    const h2 = v ? Math.max(6, bh * v / mx) : 3;
+    x.fillStyle = v && i === D.peak ? RED : (v ? '#5b534a' : '#cfc6b5');
+    x.fillRect(bx + i * bw + bw * .22, top + bh - h2, bw * .56, h2);
+    T0(String(i + 1), bx + i * bw + bw / 2, top + bh + 36, '22px ' + FONT, MUTE, 'center');
+  });
+  if (D.total) T0((D.peak + 1) + ' 月读得最多，' + hm(D.mon[D.peak]), W - M, 650, '26px ' + FONT, RED, 'right');
+  x.strokeStyle = LINE; x.beginPath(); x.moveTo(M, 980); x.lineTo(W - M, 980); x.stroke();
+  // books
+  const nf = D.fin.length;
+  T0(nf ? '读完了 ' + nf + ' 本' : (D.nBooks ? '翻开过 ' + D.nBooks + ' 本' : '这一年还没有读过书'), M, 1040, '600 32px ' + FONT, INK);
+  const shown = nf ? D.fin.slice(-5) : (D.top ? [D.top.b] : []);
+  const imgs = await Promise.all(shown.map(b => loadImgEl(b.cover || genCover(b))));
+  const cw = 150, ch = 214, gap = 24, sx = M;
+  shown.forEach((b, i) => {
+    const X = sx + i * (cw + gap), Y = 1078, im = imgs[i];
+    x.save(); x.shadowColor = 'rgba(0,0,0,.22)'; x.shadowBlur = 14; x.shadowOffsetY = 6; x.fillStyle = '#fff'; x.fillRect(X, Y, cw, ch); x.restore();
+    if (im) { const r = Math.max(cw / im.width, ch / im.height), sw = cw / r, sh = ch / r; x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, X, Y, cw, ch); }
+    let t = b.title; x.font = '22px ' + FONT; while (t.length > 1 && x.measureText(t).width > cw) t = t.slice(0, -1);
+    T0(t === b.title ? t : t + '…', X + cw / 2, Y + ch + 34, '22px ' + FONT, INK, 'center');
+  });
+  if (nf > 5) T0('另有 ' + (nf - 5) + ' 本', W - M, 1078 + ch, '24px ' + FONT, MUTE, 'right');
+  x.strokeStyle = LINE; x.beginPath(); x.moveTo(M, 1370); x.lineTo(W - M, 1370); x.stroke();
+  // facts
+  const facts = [];
+  if (D.best) { const d = D.bestK.split('-'); facts.push(['单日最久', (+d[1]) + ' 月 ' + (+d[2]) + ' 日，读了 ' + hm(D.best)]); }
+  if (D.hour >= 0) facts.push(['常在', D.hour + ' 点前后翻开书']);
+  if (D.top && nf) facts.push(['陪得最久的书', '《' + clip(D.top.b.title, 12) + '》 ' + hm(D.top.sec)]);
+  facts.slice(0, 3).forEach(([k, v], i) => { T0(k, M, 1426 + i * 60, '26px ' + FONT, MUTE); T0(v, M + 200, 1426 + i * 60, '30px ' + FONT, INK); });
+  T0('—— 同页 · 和克总一起读 ——', W / 2, H - 96, '22px ' + FONT, MUTE, 'center');
+  return cv;
+}
+function buildYear() {
+  const cur = new Date().getFullYear();
+  const ys = Array.from(new Set(Object.keys(S.stats.days).map(k => +k.slice(0, 4)).concat([cur]))).filter(Boolean).sort((a, b) => b - a);
+  const Y = S.sheet.y || cur, D = yearStats(Y);
+  const el = h('div', { style: 'display:grid;gap:14px' });
+  if (ys.length > 1) el.append(h('div', { class: 'seg' }, ...ys.slice(0, 4).map(y => h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(y === Y), text: y + ' 年', onclick: () => { S.sheet.y = y; buildSheet(); } }))));
+  if (!D.total) { el.append(h('p', { class: 'fine', text: Y + ' 年还没有阅读记录，读几页再来看。' })); return { title: '年度卡片', el }; }
+  const img = h('img', { alt: Y + ' 年阅读卡片', style: 'width:100%;border-radius:8px;border:1px solid var(--line);background:var(--surface)' });
+  el.append(img);
+  const key = Y;
+  drawYear(D).then(cv => { if (S.sheet && S.sheet.kind === 'year' && (S.sheet.y || cur) === key) img.src = cv.toDataURL('image/png'); S.sheet && (S.sheet.cv = cv); }).catch(() => toast('卡片没画出来，再试一次。'));
+  el.append(h('button', { class: 'btn ai', type: 'button', text: '存成图片', onclick: async () => {
+    if (!downloads) return toast('这里存不了图片，长按上面的图片保存。');
+    try { const cv = S.sheet.cv || await drawYear(D); const blob = await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('x')), 'image/png')); await downloads.save({ filename: Y + '-阅读年度卡片.png', data: blob }); }
+    catch (e) { if (!e || e.code !== 'declined') toast('图片没存上，长按上面的图片保存。'); }
+  } }));
+  return { title: Y + ' 年度卡片', el };
 }
 async function saveMilesImg(items) {
   if (!items.length) return;
